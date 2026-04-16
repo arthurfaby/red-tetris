@@ -1,6 +1,6 @@
 import Fastify, {FastifyReply, FastifyRequest} from 'fastify'
 
-const fastify = new Fastify({ logger: {
+const fastify = Fastify({ logger: {
         transport: {
             target: 'pino-pretty',
             options: { colorize: true }
