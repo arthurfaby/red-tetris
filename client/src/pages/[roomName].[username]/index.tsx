@@ -1,4 +1,5 @@
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
+import {useParams} from "react-router";
 import { useState} from "react";
 import {Avatar, AvatarBadge, AvatarFallback} from "@/components/ui/avatar.tsx";
 import {Button} from "@/components/ui/button.tsx";
