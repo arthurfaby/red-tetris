@@ -8,6 +8,10 @@ export abstract class Tetromino {
     #type: TetrominoType
     #matrixSize: number
 
+    public get size() {
+        return this.#matrixSize
+    }
+
     public get matrix() {
         return this.#matrix
     }
