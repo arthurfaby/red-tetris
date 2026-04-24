@@ -32,7 +32,7 @@ describe('Board', () => {
         })
 
         it('should detect collision on right', () => {
-            expect(board.checkCollision(tetrominoI, { x: 6 }))
+            expect(board.checkCollision(tetrominoI, { x: 6, y: 18 }))
         })
     })
 })
