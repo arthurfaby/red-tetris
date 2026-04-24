@@ -5,5 +5,5 @@ export enum TetrominoType {
     O,
     S,
     T,
-    Z
+    Z,
 }

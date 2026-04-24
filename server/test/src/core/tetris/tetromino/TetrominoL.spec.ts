@@ -1,42 +1,42 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { TetrominoJ } from '../../../../../src/core/tetris/tetrominos/TetrominoJ'
+import { TetrominoL } from '../../../../../src/core/tetris/tetrominos/TetrominoL'
 import { TetrominoType } from '../../../../../src/core/tetris/enums/TetrominoType'
 import { Matrix } from '../../../../../src/core/tetris/types/Matrix'
 import { checkMatrix } from './check-matrix'
 
-describe('TetrominoJ', () => {
+describe('TetrominoL', () => {
     const firstPosition: Matrix = [
-        [1, 0, 0],
+        [0, 0, 1],
         [1, 1, 1],
         [0, 0, 0],
     ]
 
     const secondPosition: Matrix = [
+        [0, 1, 0],
+        [0, 1, 0],
         [0, 1, 1],
-        [0, 1, 0],
-        [0, 1, 0],
     ]
 
     const thirdPosition: Matrix = [
         [0, 0, 0],
         [1, 1, 1],
-        [0, 0, 1],
+        [1, 0, 0],
     ]
 
     const fourthPosition: Matrix = [
-        [0, 1, 0],
-        [0, 1, 0],
         [1, 1, 0],
+        [0, 1, 0],
+        [0, 1, 0],
     ]
 
-    let tetromino: TetrominoJ
+    let tetromino: TetrominoL
 
     beforeEach(() => {
-        tetromino = new TetrominoJ()
+        tetromino = new TetrominoL()
     })
 
     it('should have correct type', () => {
-        expect(tetromino.type).toBe(TetrominoType.J)
+        expect(tetromino.type).toBe(TetrominoType.L)
     })
 
     it('should have correct matrix size', () => {

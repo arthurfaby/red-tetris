@@ -1,1 +1,1 @@
-export type Matrix = number[][];
+export type Matrix = number[][]

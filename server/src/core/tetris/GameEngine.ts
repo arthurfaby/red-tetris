@@ -1,13 +1,13 @@
-import {Board} from "./Board";
+import { Board } from './Board'
 
 export class GameEngine {
-    #board!: Board;
+    #board!: Board
 
     public get board() {
-        return this.#board;
+        return this.#board
     }
 
     public constructor() {
-        this.#board = new Board();
+        this.#board = new Board()
     }
 }
