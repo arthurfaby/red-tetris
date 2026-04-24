@@ -1,8 +1,8 @@
-import {describe, expect, it} from "vitest";
-import {TetrominoType} from "../../../../../src/core/tetris/enums/TetrominoType";
+import { describe, expect, it } from 'vitest'
+import { TetrominoType } from '../../../../../src/core/tetris/enums/TetrominoType'
 
-describe("TetrominoType", () => {
-    it("should have right values", () => {
+describe('TetrominoType', () => {
+    it('should have right values', () => {
         expect(TetrominoType.I).toBe(1)
         expect(TetrominoType.J).toBe(2)
         expect(TetrominoType.L).toBe(3)
