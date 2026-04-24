@@ -1,6 +1,5 @@
-import { Matrix } from './types/Matrix'
 import { Tetromino } from './Tetromino'
-import { Position } from '@red-tetris/shared'
+import { Matrix, Position } from '@red-tetris/shared'
 
 export class Board {
     #grid: Matrix
@@ -33,6 +32,8 @@ export class Board {
                 if (posToCheck.y < 0) {
                     continue
                 }
+
+                console.log(posToCheck, this.grid)
 
                 if (this.grid[posToCheck.y][posToCheck.x] !== 0) {
                     return true
