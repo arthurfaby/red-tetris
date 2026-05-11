@@ -1,6 +1,6 @@
 import {useTetrisStore} from "@/lib/stores/use-tetris-store.tsx";
 import {TetrisCell} from "@/components/game/tetris-cell.tsx";
-import {TETROMINOS} from "@/lib/tetrominos.ts";
+import { TETROMINOS } from "@red-tetris/shared"
 import {useEffect} from "react";
 
 export function TetrisBoard() {
@@ -38,7 +38,7 @@ export function TetrisBoard() {
     }
 
     return (
-        <div className="grid grid-cols-10">
+        <div className="grid grid-cols-[repeat(10,32px)] grid-rows-[repeat(20,32px)]">
             {displayBoard.map((row, y) => (
                 row.map((cellType, x) => (
                     <TetrisCell key={`${y}-${x}`} type={cellType} />

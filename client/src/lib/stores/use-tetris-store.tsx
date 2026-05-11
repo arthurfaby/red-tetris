@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import {Tetromino, type TetrominoType} from "@/lib/tetrominos.ts";
+import {Tetromino, type TetrominoType} from "@red-tetris/shared";
 
 function createEmptyBoard(height: number, width: number) {
     return new Array<Array<TetrominoType>>(height).fill(new Array<TetrominoType>(width).fill(Tetromino.NONE));
@@ -37,39 +37,53 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         rotation: 0
     },
 
-    nextPiece: Tetromino.T,
+    nextPiece: Tetromino.Z,
     score: 0,
-    level: 1,
-    isPlaying: true,
+    isPlaying: false,
     isGameOver: false,
 
     // --- ACTIONS ---
-    startGame: () => set({ /* reset state */ }),
-
-    moveLeft: () => { /* Logique + vérification des collisions */ },
-    moveRight: () => { /* Logique + vérification des collisions */ },
-    rotate: () => {
-        const currentPiece = get().currentPiece
-        set({currentPiece: {...currentPiece, rotation: (currentPiece.rotation + 1) % 4}})
+    startGame: () => {
+        set({isPlaying: true, isGameOver: false});
+        // TODO start game logic
     },
 
-    // La fonction critique appelée par la boucle de jeu (ex: toutes les 800ms)
+    moveLeft: () => {
+        const currentPiece = get().currentPiece
+        set({currentPiece: {...currentPiece, x: currentPiece.x - 1}})
+        // TODO check collisions
+    },
+    moveRight: () => {
+
+        const currentPiece = get().currentPiece
+        set({currentPiece: {...currentPiece, x: currentPiece.x + 1}})
+        // TODO check collisions
+    },
+    rotate: () => {
+        const currentPiece = get().currentPiece
+        const newRotation = (currentPiece.rotation + 1) % 4
+        set({currentPiece: {...currentPiece, rotation: newRotation}})
+        // TODO check collisions
+    },
     tick: () => {
-        get().rotate()
+        const currentPiece = get().currentPiece
+        set({ currentPiece: { ...currentPiece, y: currentPiece.y + 1 } });
+        // TODO implement
         // const { currentPiece, board } = get();
         // if (canMoveDown(currentPiece, board)) {
         //     set({ currentPiece: { ...currentPiece, y: currentPiece.y + 1 } });
         // } else {
-        //     get().lockPiece(); // Fige la pièce dans le `board`
+        //     get().lockPiece();
         // }
     },
 
-    // Fige la pièce, vérifie les lignes complètes et génère la suivante
     lockPiece: () => {
-        // 1. Fusionner currentPiece dans board
-        // 2. Vérifier et supprimer les lignes pleines
-        // 3. Mettre à jour le score
-        // 4. Générer la nouvelle currentPiece
-        // 5. Vérifier le Game Over
+        // TODO implement
+        // 1. Merge currentPiece in board
+        // 2. Check and delete lines
+        // 3. Update score
+        // 4. Update currentPiece with nextPiece
+        // 5. Update nextPiece from backend
+        // 6. Check Game Over
     }
 }));

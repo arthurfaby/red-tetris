@@ -1,4 +1,4 @@
-import {TETROMINOS, type TetrominoType} from "@/lib/tetrominos.ts";
+import {TETROMINOS, type TetrominoType} from "@red-tetris/shared";
 import {cn} from "@/lib/utils.ts";
 import {memo} from "react";
 
