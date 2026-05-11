@@ -1,25 +1,35 @@
 import {Card, CardContent, CardHeader} from "@/components/ui/card.tsx";
-import {useParams} from "react-router";
 import { useState} from "react";
 import {Avatar, AvatarBadge, AvatarFallback} from "@/components/ui/avatar.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import {useParams} from "@/router.ts";
+import {TetrisBoard} from "@/components/game/tetris-board.tsx";
 
 export default function Room() {
-    const { roomName, username } = useParams()
+    const { roomName, username } = useParams("/:roomName/:username")
     const [users, setUsers] = useState<string[]>(['Player 1', 'Player 2', 'Player 3', 'Player 4']);
+    const [gameHasStarted, setGameHasStarted] = useState(false);
 
-    const addPlayer = (usernameToAdd: string | undefined) => {
+    const addPlayer = (usernameToAdd: string) => {
 
-        if (usernameToAdd && !users.includes(usernameToAdd)) {
+        if (!users.includes(usernameToAdd)) {
             setUsers([...users, usernameToAdd])
         }
     }
 
     addPlayer(username);
 
+    if (gameHasStarted) {
+        return (
+            <section className="flex items-center justify-center h-screen w-screen ">
+                <TetrisBoard/>
+            </section>
+        )
+    }
+
 
     return (
-        <section className="flex items-center justify-center h-screen w-screen">
+        <section className="flex items-center justify-center h-screen w-screen ">
             <Card className={"w-full max-w-md p-8"}>
                 <CardHeader className="text-2xl ">
                     Red Tetris - {roomName}
@@ -42,7 +52,7 @@ export default function Room() {
                                 </div>
                             )
                         })}
-                        <Button className="col-span-3">Start game</Button>
+                        <Button className="col-span-3" onClick={() => setGameHasStarted(true)}>Start game</Button>
 
                     </div>) : (
                         <p className="text-red-400">ERROR. SHOULD NOT HAPPEN.</p>

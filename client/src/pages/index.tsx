@@ -12,7 +12,7 @@ export default function Index() {
 
     const navigate = useNavigate();
 
-    const handleJoin = () => {
+    function handleJoin() {
         const errors: string[] = [];
         if (!username) {
             errors.push("Username is required");
@@ -33,7 +33,7 @@ export default function Index() {
             <Card className={"w-full max-w-md p-8"}>
                 <CardHeader className="text-2xl ">
                     Red Tetris - Join room
-                    </CardHeader>
+                </CardHeader>
                 <CardContent className="">
                     <Input type="text" placeholder="Room name*" className="mb-4" value={roomName} onChange={(e) => setRoomName(e.target.value)} />
                     <Input type="text" placeholder="Username*" className="mb-4" value={username} onChange={(e) => setUsername(e.target.value)} />
