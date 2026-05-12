@@ -1,33 +1,15 @@
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 import { TetrisCell } from "@/components/game/tetris-cell.tsx";
-import { GRID_HEIGHT, GRID_WIDTH, TETROMINOS } from "@red-tetris/shared";
+import { getBoardWithCurrentPiece } from "@/lib/game/logic/get-board-with-current-piece.ts";
 
 export function TetrisBoard() {
   const board = useTetrisStore((state) => state.board);
   const currentPiece = useTetrisStore((state) => state.currentPiece);
   const startGame = useTetrisStore((state) => state.startGame);
 
-  const displayBoard = board.map((row) => [...row]);
+  const displayBoard = getBoardWithCurrentPiece(board, currentPiece);
 
   startGame();
-
-  const shape = TETROMINOS[currentPiece.type].shape[currentPiece.rotation];
-  shape.forEach((row, dy) => {
-    row.forEach((value, dx) => {
-      if (value !== 0) {
-        const boardY = currentPiece.y + dy;
-        const boardX = currentPiece.x + dx;
-        if (
-          boardY >= 0 &&
-          boardY < GRID_HEIGHT &&
-          boardX >= 0 &&
-          boardX < GRID_WIDTH
-        ) {
-          displayBoard[boardY][boardX] = currentPiece.type;
-        }
-      }
-    });
-  });
 
   return (
     <div className="grid grid-cols-[repeat(10,32px)] grid-rows-[repeat(20,32px)]">

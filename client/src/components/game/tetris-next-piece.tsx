@@ -1,5 +1,6 @@
 import { TETROMINOS, type TetrominoType } from "@red-tetris/shared";
 import { cn } from "@/lib/utils.ts";
+import { TETROMINO_CLASSES } from "@/lib/game/constants.ts";
 
 interface TetrisNextPieceProps {
   type: TetrominoType;
@@ -22,7 +23,7 @@ export function TetrisNextPiece({ type }: TetrisNextPieceProps) {
         row.map((cellType, x) => (
           <div
             key={`${y}-${x}`}
-            className={cn("size-8", TETROMINOS[cellType].classes)}
+            className={cn("size-8", TETROMINO_CLASSES[cellType])}
           ></div>
         )),
       )}

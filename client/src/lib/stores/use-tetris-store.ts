@@ -1,20 +1,19 @@
 import { create } from "zustand";
-import { Tetromino, TETROMINOS, type TetrominoType } from "@red-tetris/shared";
+import { Tetromino, type TetrominoType } from "@red-tetris/shared";
+import { createEmptyBoard } from "@/lib/game/logic/create-empty-board.ts";
 
-function createEmptyBoard(height: number, width: number) {
-  return Array.from({ length: height }, () =>
-    new Array(width).fill(Tetromino.NONE),
-  );
+export type BoardState = TetrominoType[][];
+
+export interface TetrominoState {
+  type: TetrominoType;
+  x: number;
+  y: number;
+  rotation: number; // Rotation index (0, 1, 2, 3)
 }
 
-interface TetrisStore {
-  board: TetrominoType[][];
-  currentPiece: {
-    type: TetrominoType;
-    x: number;
-    y: number;
-    rotation: number; // Rotation index (0, 1, 2, 3)
-  };
+export interface TetrisStore {
+  board: BoardState;
+  currentPiece: TetrominoState;
   nextPiece: TetrominoType;
   score: number;
   isPlaying: boolean;
@@ -77,6 +76,17 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   tick: () => {
     const currentPiece = get().currentPiece;
     set({ currentPiece: { ...currentPiece, y: currentPiece.y + 1 } });
+    const randomIndex = Math.floor(Math.random() * 7);
+    const randomPiece = [
+      Tetromino.I,
+      Tetromino.J,
+      Tetromino.L,
+      Tetromino.O,
+      Tetromino.S,
+      Tetromino.T,
+      Tetromino.Z,
+    ][randomIndex];
+    set({ nextPiece: randomPiece });
     // TODO implement
     // const { currentPiece, board } = get();
     // if (canMoveDown(currentPiece, board)) {

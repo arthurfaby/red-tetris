@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { useParams } from "@/router.ts";
-import { TetrisGame } from "@/components/game/tetris-game.tsx";
+import { TetrisGame } from "@/components/game/layout/tetris-game.tsx";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 
 export default function Room() {
