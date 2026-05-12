@@ -16,7 +16,7 @@ export const TETROMINOS: Record<TetrominoType, {
     classes: string;
 }> = {
     [Tetromino.NONE]: {
-        shape: [[[0]]],
+        shape: [[[Tetromino.NONE]]],
         classes: "bg-transparent",
     },
 
@@ -24,28 +24,28 @@ export const TETROMINOS: Record<TetrominoType, {
         classes: "bg-cyan-400 border-4 border-t-cyan-300 border-l-cyan-300 border-b-cyan-700 border-r-cyan-700",
         shape: [
             [
-                [0, 0, 0, 0],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
                 [Tetromino.I, Tetromino.I, Tetromino.I, Tetromino.I],
-                [0, 0, 0, 0],
-                [0, 0, 0, 0]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE, Tetromino.NONE]
             ],
             [
-                [0, 0, Tetromino.I, 0],
-                [0, 0, Tetromino.I, 0],
-                [0, 0, Tetromino.I, 0],
-                [0, 0, Tetromino.I, 0]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.I, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.I, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.I, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.I, Tetromino.NONE]
             ],
             [
-                [0, 0, 0, 0],
-                [0, 0, 0, 0],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
                 [Tetromino.I, Tetromino.I, Tetromino.I, Tetromino.I],
-                [0, 0, 0, 0]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE, Tetromino.NONE]
             ],
             [
-                [0, Tetromino.I, 0, 0],
-                [0, Tetromino.I, 0, 0],
-                [0, Tetromino.I, 0, 0],
-                [0, Tetromino.I, 0, 0]
+                [Tetromino.NONE, Tetromino.I, Tetromino.NONE, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.I, Tetromino.NONE, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.I, Tetromino.NONE, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.I, Tetromino.NONE, Tetromino.NONE]
             ]
         ]
     },
@@ -54,24 +54,24 @@ export const TETROMINOS: Record<TetrominoType, {
         classes: "bg-pink-400 border-4 border-t-pink-300 border-l-pink-300 border-b-pink-700 border-r-pink-700",
         shape: [
             [
-                [Tetromino.J, 0, 0],
+                [Tetromino.J, Tetromino.NONE, Tetromino.NONE],
                 [Tetromino.J, Tetromino.J, Tetromino.J],
-                [0, 0, 0]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE]
             ],
             [
-                [0, Tetromino.J, Tetromino.J],
-                [0, Tetromino.J, 0],
-                [0, Tetromino.J, 0]
+                [Tetromino.NONE, Tetromino.J, Tetromino.J],
+                [Tetromino.NONE, Tetromino.J, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.J, Tetromino.NONE]
             ],
             [
-                [0, 0, 0],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
                 [Tetromino.J, Tetromino.J, Tetromino.J],
-                [0, 0, Tetromino.J]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.J]
             ],
             [
-                [0, Tetromino.J, 0],
-                [0, Tetromino.J, 0],
-                [Tetromino.J, Tetromino.J, 0]
+                [Tetromino.NONE, Tetromino.J, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.J, Tetromino.NONE],
+                [Tetromino.J, Tetromino.J, Tetromino.NONE]
             ]
         ]
     },
@@ -80,24 +80,24 @@ export const TETROMINOS: Record<TetrominoType, {
         classes: "bg-orange-400 border-4 border-t-orange-300 border-l-orange-300 border-b-orange-700 border-r-orange-700",
         shape: [
             [
-                [0, 0, Tetromino.L],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.L],
                 [Tetromino.L, Tetromino.L, Tetromino.L],
-                [0, 0, 0]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE]
             ],
             [
-                [0, Tetromino.L, 0],
-                [0, Tetromino.L, 0],
-                [0, Tetromino.L, Tetromino.L]
+                [Tetromino.NONE, Tetromino.L, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.L, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.L, Tetromino.L]
             ],
             [
-                [0, 0, 0],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
                 [Tetromino.L, Tetromino.L, Tetromino.L],
-                [Tetromino.L, 0, 0]
+                [Tetromino.L, Tetromino.NONE, Tetromino.NONE]
             ],
             [
-                [Tetromino.L, Tetromino.L, 0],
-                [0, Tetromino.L, 0],
-                [0, Tetromino.L, 0]
+                [Tetromino.L, Tetromino.L, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.L, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.L, Tetromino.NONE]
             ]
         ]
     },
@@ -116,24 +116,24 @@ export const TETROMINOS: Record<TetrominoType, {
         classes: "bg-red-400 border-4 border-t-red-300 border-l-red-300 border-b-red-700 border-r-red-700",
         shape: [
             [
-                [0, Tetromino.S, Tetromino.S],
-                [Tetromino.S, Tetromino.S, 0],
-                [0, 0, 0]
+                [Tetromino.NONE, Tetromino.S, Tetromino.S],
+                [Tetromino.S, Tetromino.S, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE]
             ],
             [
-                [0, Tetromino.S, 0],
-                [0, Tetromino.S, Tetromino.S],
-                [0, 0, Tetromino.S]
+                [Tetromino.NONE, Tetromino.S, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.S, Tetromino.S],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.S]
             ],
             [
-                [0, 0, 0],
-                [0, Tetromino.S, Tetromino.S],
-                [Tetromino.S, Tetromino.S, 0]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.S, Tetromino.S],
+                [Tetromino.S, Tetromino.S, Tetromino.NONE]
             ],
             [
-                [Tetromino.S, 0, 0],
-                [Tetromino.S, Tetromino.S, 0],
-                [0, Tetromino.S, 0]
+                [Tetromino.S, Tetromino.NONE, Tetromino.NONE],
+                [Tetromino.S, Tetromino.S, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.S, Tetromino.NONE]
             ]
         ]
     },
@@ -142,24 +142,24 @@ export const TETROMINOS: Record<TetrominoType, {
         classes: "bg-purple-400 border-4 border-t-purple-300 border-l-purple-300 border-b-purple-700 border-r-purple-700",
         shape: [
             [
-                [0, Tetromino.T, 0],
+                [Tetromino.NONE, Tetromino.T, Tetromino.NONE],
                 [Tetromino.T, Tetromino.T, Tetromino.T],
-                [0, 0, 0]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE]
             ],
             [
-                [0, Tetromino.T, 0],
-                [0, Tetromino.T, Tetromino.T],
-                [0, Tetromino.T, 0]
+                [Tetromino.NONE, Tetromino.T, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.T, Tetromino.T],
+                [Tetromino.NONE, Tetromino.T, Tetromino.NONE]
             ],
             [
-                [0, 0, 0],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
                 [Tetromino.T, Tetromino.T, Tetromino.T],
-                [0, Tetromino.T, 0]
+                [Tetromino.NONE, Tetromino.T, Tetromino.NONE]
             ],
             [
-                [0, Tetromino.T, 0],
-                [Tetromino.T, Tetromino.T, 0],
-                [0, Tetromino.T, 0]
+                [Tetromino.NONE, Tetromino.T, Tetromino.NONE],
+                [Tetromino.T, Tetromino.T, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.T, Tetromino.NONE]
             ]
         ]
     },
@@ -168,24 +168,24 @@ export const TETROMINOS: Record<TetrominoType, {
         classes: "bg-green-400 border-4 border-t-green-300 border-l-green-300 border-b-green-700 border-r-green-700",
         shape: [
             [
-                [Tetromino.Z, Tetromino.Z, 0],
-                [0, Tetromino.Z, Tetromino.Z],
-                [0, 0, 0]
+                [Tetromino.Z, Tetromino.Z, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.Z, Tetromino.Z],
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE]
             ],
             [
-                [0, 0, Tetromino.Z],
-                [0, Tetromino.Z, Tetromino.Z],
-                [0, Tetromino.Z, 0]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.Z],
+                [Tetromino.NONE, Tetromino.Z, Tetromino.Z],
+                [Tetromino.NONE, Tetromino.Z, Tetromino.NONE]
             ],
             [
-                [0, 0, 0],
-                [Tetromino.Z, Tetromino.Z, 0],
-                [0, Tetromino.Z, Tetromino.Z]
+                [Tetromino.NONE, Tetromino.NONE, Tetromino.NONE],
+                [Tetromino.Z, Tetromino.Z, Tetromino.NONE],
+                [Tetromino.NONE, Tetromino.Z, Tetromino.Z]
             ],
             [
-                [0, Tetromino.Z, 0],
-                [Tetromino.Z, Tetromino.Z, 0],
-                [Tetromino.Z, 0, 0]
+                [Tetromino.NONE, Tetromino.Z, Tetromino.NONE],
+                [Tetromino.Z, Tetromino.Z, Tetromino.NONE],
+                [Tetromino.Z, Tetromino.NONE, Tetromino.NONE]
             ]
         ]
     }
