@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { Tetromino, type TetrominoType } from "@red-tetris/shared";
+import {
+  GRID_HEIGHT,
+  GRID_WIDTH,
+  Tetromino,
+  type TetrominoType,
+} from "@red-tetris/shared";
 import { createEmptyBoard } from "@/lib/game/logic/create-empty-board.ts";
 
 export type BoardState = TetrominoType[][];
@@ -31,7 +36,7 @@ export interface TetrisStore {
 
 export const useTetrisStore = create<TetrisStore>((set, get) => ({
   // --- STATE ---
-  board: createEmptyBoard(20, 10),
+  board: createEmptyBoard(GRID_HEIGHT, GRID_WIDTH),
 
   currentPiece: {
     type: Tetromino.L,
