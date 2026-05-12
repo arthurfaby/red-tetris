@@ -50,7 +50,9 @@ export default function Index() {
           <Button onClick={handleJoin}>Join</Button>
           {errors.length > 0 && <Separator className="mt-2 mb-2"></Separator>}
           {errors.map((error) => (
-            <p className="text-red-400">{error}</p>
+            <p key={error} className="text-red-400">
+              {error}
+            </p>
           ))}
         </CardContent>
       </Card>
