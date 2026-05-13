@@ -1,4 +1,5 @@
 .idea
 node_modules
 .pnpm-store
-/roadmap.html
+
+roadmap.html
