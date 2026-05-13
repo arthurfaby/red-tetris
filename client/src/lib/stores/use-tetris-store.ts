@@ -62,7 +62,15 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     if (get().isPlaying && !get().isGameOver) return;
     set({ isPlaying: true, isGameOver: false, score: 0, linesCleared: 0 });
     set({ board: createEmptyBoard(GRID_HEIGHT, GRID_WIDTH) });
-    // TODO change with backend sequence
+    // TODO change with backend sequence (current and next)
+    set({
+      currentPiece: {
+        type: Tetromino.L,
+        x: 4,
+        y: 0,
+        rotation: 0,
+      },
+    });
     const randomIndex = Math.floor(Math.random() * 7);
     const randomPiece = [
       Tetromino.I,
