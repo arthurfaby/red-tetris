@@ -6,6 +6,7 @@ import {
   type TetrominoType,
 } from "@red-tetris/shared";
 import { createEmptyBoard } from "@/lib/game/logic/create-empty-board.ts";
+import { isValidPosition } from "@/lib/game/logic/is-valid-position.ts";
 
 export type BoardState = TetrominoType[][];
 
@@ -64,23 +65,38 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
 
   moveLeft: () => {
     const currentPiece = get().currentPiece;
-    set({ currentPiece: { ...currentPiece, x: currentPiece.x - 1 } });
-    // TODO check collisions
+    if (
+      isValidPosition(get().board, { ...currentPiece, x: currentPiece.x - 1 })
+    ) {
+      set({ currentPiece: { ...currentPiece, x: currentPiece.x - 1 } });
+    }
   },
   moveRight: () => {
     const currentPiece = get().currentPiece;
-    set({ currentPiece: { ...currentPiece, x: currentPiece.x + 1 } });
-    // TODO check collisions
+    if (
+      isValidPosition(get().board, { ...currentPiece, x: currentPiece.x + 1 })
+    ) {
+      set({ currentPiece: { ...currentPiece, x: currentPiece.x + 1 } });
+    }
   },
   rotate: () => {
     const currentPiece = get().currentPiece;
     const newRotation = (currentPiece.rotation + 1) % 4;
-    set({ currentPiece: { ...currentPiece, rotation: newRotation } });
-    // TODO check collisions
+    if (
+      isValidPosition(get().board, { ...currentPiece, rotation: newRotation })
+    ) {
+      set({ currentPiece: { ...currentPiece, rotation: newRotation } });
+    }
   },
   tick: () => {
     const currentPiece = get().currentPiece;
-    set({ currentPiece: { ...currentPiece, y: currentPiece.y + 1 } });
+    if (
+      isValidPosition(get().board, { ...currentPiece, y: currentPiece.y + 1 })
+    ) {
+      set({ currentPiece: { ...currentPiece, y: currentPiece.y + 1 } });
+    } else {
+      // TODO lockPiece
+    }
     const randomIndex = Math.floor(Math.random() * 7);
     const randomPiece = [
       Tetromino.I,
