@@ -1,27 +1,18 @@
-import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
-
-const fastify = Fastify({
-    logger: {
-        transport: {
-            target: 'pino-pretty',
-            options: { colorize: true },
-        },
-    },
-})
-
-// TODO return index.html and bundle.js of the frontend here
-fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
-    request.log.error('Should return index.html and bundle.js')
-    reply.status(200)
-    return { hello: 'world' }
-})
+import {buildApp} from "./app";
+import {registerSocketHandlers} from "./socket";
 
 const start = async () => {
     try {
-        await fastify.listen({ port: 3000, host: '0.0.0.0' })
-        console.log('🚀 Serveur prêt sur http://localhost:3000')
+        const app = await buildApp()
+        registerSocketHandlers(app)
+
+        // TODO return index.html and bundle.js of the frontend here
+
+        await app.listen({ port: 3000, host: '0.0.0.0' })
+
+        app.log.info('server ready on http://localhost:3000')
     } catch (err) {
-        fastify.log.error(err)
+        console.error(err)
         process.exit(1)
     }
 }
