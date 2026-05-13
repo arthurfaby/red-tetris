@@ -11,6 +11,7 @@ export default defineConfig({
     environment: "jsdom",
     coverage: {
       include: ["**/*.{ts,tsx}"],
+      exclude: ["**/*.spec.{ts,tsx}"],
       provider: "v8",
     },
   },

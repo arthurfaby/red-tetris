@@ -29,4 +29,20 @@ describe("get-board-with-current-piece.ts", () => {
       }
     }
   });
+
+  it("should do nothing", () => {
+    const currentPiece: TetrominoState = {
+      rotation: 0,
+      y: 20,
+      x: 10,
+      type: Tetromino.J,
+    };
+    const emptyBoard = createEmptyBoard(20, 10);
+    const board = getBoardWithCurrentPiece(emptyBoard, currentPiece);
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 20; j++) {
+        expect(board[j][i]).toEqual(Tetromino.NONE);
+      }
+    }
+  });
 });

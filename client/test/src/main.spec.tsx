@@ -22,13 +22,6 @@ describe("main.tsx", () => {
   });
 
   it("calls createRoot with #root element and renders Routes", async () => {
-    vi.mock("react-dom/client", () => ({
-      createRoot: vi.fn(() => ({ render: vi.fn() })),
-    }));
-    vi.mock("@generouted/react-router", () => ({
-      Routes: () => null,
-    }));
-
     const { createRoot } = await import("react-dom/client");
     await import("@/main.tsx");
 

@@ -192,7 +192,6 @@ describe("useTheme", () => {
     // returns initialState. This covers the initialState.setTheme: () => null function.
     const { result } = renderHook(() => useTheme());
     expect(result.current.theme).toBe("light");
-    // Call the default setTheme - it returns null (covers the default setTheme function)
     result.current.setTheme("dark");
   });
 
