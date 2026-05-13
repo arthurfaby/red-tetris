@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Red Tetris — Roadmap Issues</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #060d1f;
+      --bg2:       #0d1829;
+      --bg3:       #101e35;
+      --border:    rgba(255,255,255,0.07);
+
+      --af:        #3b82f6;
+      --af-light:  #93c5fd;
+      --af-bg:     rgba(59,130,246,0.07);
+      --af-border: rgba(59,130,246,0.22);
+
+      --pr:        #a855f7;
+      --pr-light:  #d8b4fe;
+      --pr-bg:     rgba(168,85,247,0.07);
+      --pr-border: rgba(168,85,247,0.22);
+
+      --crit:      #ef4444;
+      --crit-bg:   rgba(239,68,68,0.10);
+      --crit-b:    rgba(239,68,68,0.35);
+
+      --game:      #22c55e;
+      --server:    #f97316;
+      --client:    #38bdf8;
+      --tests:     #eab308;
+
+      --text:      #f1f5f9;
+      --muted:     #94a3b8;
+      --dim:       #475569;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 36px 40px 48px;
+      min-width: 1100px;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    header h1 {
+      font-size: 26px;
+      font-weight: 800;
+      background: linear-gradient(130deg, #60a5fa 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+
+    header p { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+    .legend {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+
+    .legend-row { display: flex; gap: 14px; }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .leg-dot {
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ─── STATS ─── */
+    .stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      flex: 1;
+    }
+
+    .stat-val { font-size: 26px; font-weight: 800; letter-spacing: -1px; line-height: 1; }
+    .stat-lbl { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* ─── CRITICAL ALERT ─── */
+    .alert {
+      background: var(--crit-bg);
+      border: 1px solid var(--crit-b);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+    .alert-body strong {
+      display: block;
+      color: #fca5a5;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .alert-body span { font-size: 12px; color: var(--muted); }
+
+    /* ─── MAIN BOARD ─── */
+    .board {
+      display: grid;
+      grid-template-columns: 126px 1fr 1fr;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    /* header row */
+    .ph-gutter {
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .person-head {
+      padding: 14px 16px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .person-head.af {
+      color: var(--af-light);
+      border-right: 1px solid var(--border);
+      border-left: 3px solid var(--af);
+    }
+
+    .person-head.pr {
+      color: var(--pr-light);
+      border-left: 3px solid var(--pr);
+    }
+
+    .avatar {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .avatar.af { background: linear-gradient(135deg,#1d4ed8,#3b82f6); }
+    .avatar.pr { background: linear-gradient(135deg,#7c3aed,#a855f7); }
+
+    .head-count { margin-left: auto; font-size: 11px; font-weight: 400; color: var(--dim); }
+
+    /* phase label cells */
+    .ph-label {
+      padding: 16px 12px;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .ph-label:last-of-type { border-bottom: none; }
+
+    .ph-num {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+
+    .ph-name { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; }
+    .ph-note { font-size: 10px; color: var(--dim); margin-top: 5px; line-height: 1.4; }
+
+    .ph1 .ph-num { color: #34d399; }
+    .ph2 .ph-num { color: #60a5fa; }
+    .ph3 .ph-num { color: #fb923c; }
+    .ph4 .ph-num { color: #facc15; }
+
+    /* lane cells */
+    .lane {
+      padding: 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .lane.af-lane { border-right: 1px solid var(--border); }
+
+    .lane:nth-last-child(-n+2) { border-bottom: none; }
+
+    /* ─── CARDS ─── */
+    .card {
+      border-radius: 9px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+    }
+
+    .card.af    { border-left: 3px solid var(--af); background: var(--af-bg); border-color: var(--af-border); }
+    .card.pr    { border-left: 3px solid var(--pr); background: var(--pr-bg); border-color: var(--pr-border); }
+    .card.crit  { border-left: 3px solid var(--crit); background: var(--crit-bg); border-color: var(--crit-b); }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 5px;
+      flex-wrap: wrap;
+    }
+
+    .issue-chip {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.07);
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    a.issue-chip:hover {
+      background: rgba(255,255,255,0.16);
+      color: var(--text);
+    }
+
+    .card.crit .issue-chip { background: rgba(239,68,68,0.18); color: #fca5a5; }
+    .card.crit a.issue-chip:hover { background: rgba(239,68,68,0.35); color: #fff; }
+
+    .cat {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+
+    .cat-game   { background: rgba(34,197,94,0.14);  color: #86efac; }
+    .cat-server { background: rgba(249,115,22,0.14); color: #fdba74; }
+    .cat-client { background: rgba(56,189,248,0.14); color: #7dd3fc; }
+    .cat-tests  { background: rgba(234,179,8,0.14);  color: #fde047; }
+
+    .crit-badge {
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(239,68,68,0.2);
+      color: #f87171;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-left: auto;
+      animation: blink 1.8s ease-in-out infinite;
+    }
+
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.55} }
+
+    .card-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .deps {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 7px;
+    }
+
+    .dep {
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .dep.needs {
+      background: rgba(148,163,184,0.08);
+      color: var(--muted);
+    }
+
+    .dep.blocks {
+      background: rgba(251,191,36,0.1);
+      color: #fcd34d;
+      font-weight: 600;
+    }
+
+    .dep.blocks-hard {
+      background: rgba(239,68,68,0.1);
+      color: #fca5a5;
+      font-weight: 700;
+    }
+
+    /* ─── BONUS SECTION ─── */
+    .bonus-wrap {
+      margin-top: 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      opacity: 0.55;
+    }
+
+    .bonus-hd {
+      background: var(--bg2);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bonus-hd h3 {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--dim);
+    }
+
+    .lock-tag {
+      font-size: 10px;
+      color: var(--dim);
+      background: rgba(107,114,128,0.12);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .bonus-cards {
+      display: flex;
+      gap: 10px;
+      padding: 14px;
+      background: var(--bg);
+      flex-wrap: wrap;
+    }
+
+    .card.bonus {
+      border-left: 3px solid #4b5563;
+      border-color: rgba(75,85,99,0.2);
+      background: rgba(75,85,99,0.05);
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .bonus-assignee {
+      font-size: 9px;
+      color: var(--dim);
+      margin-left: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── HEADER ─── -->
+  <header>
+    <div>
+      <h1>Red Tetris — Roadmap Issues</h1>
+      <p>21 issues obligatoires · 4 bonus · repo : arthurfaby/red-tetris</p>
+    </div>
+    <div class="legend">
+      <div class="legend-row">
+        <div class="leg"><div class="leg-dot" style="background:#3b82f6"></div>arthurfaby</div>
+        <div class="leg"><div class="leg-dot" style="background:#a855f7"></div>pirabaud</div>
+        <div class="leg"><div class="leg-dot" style="background:#ef4444;border-radius:50%"></div>critique</div>
+      </div>
+      <div class="legend-row">
+        <div class="leg"><div class="leg-dot" style="background:#22c55e"></div>game logic</div>
+        <div class="leg"><div class="leg-dot" style="background:#f97316"></div>server OOP</div>
+        <div class="leg"><div class="leg-dot" style="background:#38bdf8"></div>client socket</div>
+        <div class="leg"><div class="leg-dot" style="background:#eab308"></div>tests</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── STATS ─── -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-val" style="color:var(--af-light)">11</div>
+      <div class="stat-lbl">issues · arthurfaby</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:var(--pr-light)">10</div>
+      <div class="stat-lbl">issues · pirabaud</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:#f87171">1</div>
+      <div class="stat-lbl">issue critique — bloque 6 autres</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:#34d399">4</div>
+      <div class="stat-lbl">phases jusqu'à la livraison</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" style="color:#facc15">70%</div>
+      <div class="stat-lbl">couverture tests requise</div>
+    </div>
+  </div>
+
+  <!-- ─── CRITICAL ALERT ─── -->
+  <div class="alert">
+    <div class="alert-icon">⚡</div>
+    <div class="alert-body">
+      <strong>Issue la plus critique : #8 — Setup socket.io + protocole d'events (pirabaud)</strong>
+      <span>Bloque 6 issues des deux côtés (#14, #15, #16, #17, #18, #19). À traiter en priorité absolue dès le début.</span>
+    </div>
+  </div>
+
+  <!-- ─── BOARD ─── -->
+  <div class="board">
+
+    <!-- Column headers -->
+    <div class="ph-gutter"></div>
+    <div class="person-head af">
+      <div class="avatar af">AF</div>
+      arthurfaby
+      <span class="head-count">11 issues</span>
+    </div>
+    <div class="person-head pr">
+      <div class="avatar pr">PR</div>
+      pirabaud
+      <span class="head-count">10 issues</span>
+    </div>
+
+    <!-- ── PHASE 1 ── -->
+    <div class="ph-label ph1">
+      <span class="ph-num">Phase 1</span>
+      <span class="ph-name">Démarrer maintenant</span>
+      <span class="ph-note">Aucun prérequis — lancer en parallèle</span>
+    </div>
+
+    <div class="lane af-lane">
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/2" target="_blank" class="issue-chip">#2</a>
+          <span class="cat cat-game">game</span>
+        </div>
+        <div class="card-title">Collision detection (left / right / bottom)</div>
+        <div class="deps">
+          <span class="dep blocks">🔑 bloque #3 #5 #6</span>
+        </div>
+      </div>
+
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/20" target="_blank" class="issue-chip">#20</a>
+          <span class="cat cat-tests">tests</span>
+        </div>
+        <div class="card-title">Setup Vitest — client &amp; server</div>
+        <div class="deps">
+          <span class="dep blocks">🔑 bloque #21 #22</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lane">
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/9" target="_blank" class="issue-chip">#9</a>
+          <span class="cat cat-server">server</span>
+        </div>
+        <div class="card-title">Classe Piece + séquence partagée</div>
+        <div class="deps">
+          <span class="dep blocks">🔑 bloque #11</span>
+        </div>
+      </div>
+
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/10" target="_blank" class="issue-chip">#10</a>
+          <span class="cat cat-server">server</span>
+        </div>
+        <div class="card-title">Classe Player</div>
+        <div class="deps">
+          <span class="dep blocks">🔑 bloque #11</span>
+        </div>
+      </div>
+
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/7" target="_blank" class="issue-chip">#7</a>
+          <span class="cat cat-game">game</span>
+        </div>
+        <div class="card-title">Calcul du spectre (hauteur par colonne)</div>
+        <div class="deps">
+          <span class="dep blocks">🔑 bloque #16 #17</span>
+        </div>
+      </div>
+
+      <div class="card crit">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/8" target="_blank" class="issue-chip">#8</a>
+          <span class="cat cat-server">server</span>
+          <span class="crit-badge">⚡ CRITIQUE</span>
+        </div>
+        <div class="card-title">Setup socket.io + protocole d'events</div>
+        <div class="deps">
+          <span class="dep blocks-hard">🔑 bloque #14 #15 #16 #17 #18 #19</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PHASE 2 ── -->
+    <div class="ph-label ph2">
+      <span class="ph-num">Phase 2</span>
+      <span class="ph-name">Game logic &amp; infra serveur</span>
+      <span class="ph-note">Après les bases respectives de chacun</span>
+    </div>
+
+    <div class="lane af-lane">
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/3" target="_blank" class="issue-chip">#3</a>
+          <span class="cat cat-game">game</span>
+        </div>
+        <div class="card-title">Piece locking &amp; line clearing</div>
+        <div class="deps">
+          <span class="dep needs">après #2</span>
+          <span class="dep blocks">🔑 bloque #4</span>
+        </div>
+      </div>
+
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/4" target="_blank" class="issue-chip">#4</a>
+          <span class="cat cat-game">game</span>
+        </div>
+        <div class="card-title">Game over detection</div>
+        <div class="deps">
+          <span class="dep needs">après #3</span>
+        </div>
+      </div>
+
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/5" target="_blank" class="issue-chip">#5</a>
+          <span class="cat cat-game">game</span>
+        </div>
+        <div class="card-title">Soft drop (flèche bas)</div>
+        <div class="deps">
+          <span class="dep needs">après #2</span>
+        </div>
+      </div>
+
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/11" target="_blank" class="issue-chip">#11</a>
+          <span class="cat cat-server">server</span>
+        </div>
+        <div class="card-title">Classe Game + Room management</div>
+        <div class="deps">
+          <span class="dep needs">après #9 #10 (pirabaud)</span>
+          <span class="dep blocks">🔑 bloque #12</span>
+        </div>
+      </div>
+
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/12" target="_blank" class="issue-chip">#12</a>
+          <span class="cat cat-server">server</span>
+        </div>
+        <div class="card-title">Host management &amp; déconnexions</div>
+        <div class="deps">
+          <span class="dep needs">après #11</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lane">
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/6" target="_blank" class="issue-chip">#6</a>
+          <span class="cat cat-game">game</span>
+        </div>
+        <div class="card-title">Hard drop (espace)</div>
+        <div class="deps">
+          <span class="dep needs">après #2 (arthurfaby)</span>
+        </div>
+      </div>
+
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/13" target="_blank" class="issue-chip">#13</a>
+          <span class="cat cat-server">server</span>
+        </div>
+        <div class="card-title">Servir les assets statiques</div>
+        <div class="deps">
+          <span class="dep needs">après #9 #10</span>
+        </div>
+      </div>
+
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/14" target="_blank" class="issue-chip">#14</a>
+          <span class="cat cat-client">client</span>
+        </div>
+        <div class="card-title">Setup socket.io client + flow join room</div>
+        <div class="deps">
+          <span class="dep needs">après #8 ⚡</span>
+          <span class="dep blocks">🔑 bloque #15 #17 #19</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PHASE 3 ── -->
+    <div class="ph-label ph3">
+      <span class="ph-num">Phase 3</span>
+      <span class="ph-name">Intégration socket</span>
+      <span class="ph-note">Nécessite #8 ET #14 terminés</span>
+    </div>
+
+    <div class="lane af-lane">
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/15" target="_blank" class="issue-chip">#15</a>
+          <span class="cat cat-client">client</span>
+        </div>
+        <div class="card-title">Réception de la séquence de pièces</div>
+        <div class="deps">
+          <span class="dep needs">après #8 ⚡, #14</span>
+          <span class="dep blocks">🔑 bloque #16 #18</span>
+        </div>
+      </div>
+
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/16" target="_blank" class="issue-chip">#16</a>
+          <span class="cat cat-client">client</span>
+        </div>
+        <div class="card-title">Envoi du spectre au serveur après lock</div>
+        <div class="deps">
+          <span class="dep needs">après #15, #7</span>
+          <span class="dep blocks">🔑 bloque #17</span>
+        </div>
+      </div>
+
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/18" target="_blank" class="issue-chip">#18</a>
+          <span class="cat cat-client">client</span>
+        </div>
+        <div class="card-title">Réception &amp; application des penalty lines</div>
+        <div class="deps">
+          <span class="dep needs">après #15</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lane">
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/17" target="_blank" class="issue-chip">#17</a>
+          <span class="cat cat-client">client</span>
+        </div>
+        <div class="card-title">Affichage des spectres adversaires</div>
+        <div class="deps">
+          <span class="dep needs">après #14, #16 (arthurfaby)</span>
+        </div>
+      </div>
+
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/19" target="_blank" class="issue-chip">#19</a>
+          <span class="cat cat-client">client</span>
+        </div>
+        <div class="card-title">Écran fin de partie &amp; restart</div>
+        <div class="deps">
+          <span class="dep needs">après #14</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PHASE 4 ── -->
+    <div class="ph-label ph4">
+      <span class="ph-num">Phase 4</span>
+      <span class="ph-name">Tests</span>
+      <span class="ph-note">≥ 70% statements / lines / fn · ≥ 50% branches</span>
+    </div>
+
+    <div class="lane af-lane">
+      <div class="card af">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/21" target="_blank" class="issue-chip">#21</a>
+          <span class="cat cat-tests">tests</span>
+        </div>
+        <div class="card-title">Tests unitaires — logique jeu client</div>
+        <div class="deps">
+          <span class="dep needs">après #2–#7, #20</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="lane">
+      <div class="card pr">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/22" target="_blank" class="issue-chip">#22</a>
+          <span class="cat cat-tests">tests</span>
+        </div>
+        <div class="card-title">Tests unitaires — classes serveur</div>
+        <div class="deps">
+          <span class="dep needs">après #9–#12, #20</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /board -->
+
+  <!-- ─── BONUS ─── -->
+  <div class="bonus-wrap">
+    <div class="bonus-hd">
+      <h3>Bonus</h3>
+      <span class="lock-tag">🔒 Uniquement si la partie obligatoire est 100 % fonctionnelle</span>
+    </div>
+    <div class="bonus-cards">
+      <div class="card bonus">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/23" target="_blank" class="issue-chip">#23</a>
+          <span class="bonus-assignee">arthurfaby</span>
+        </div>
+        <div class="card-title" style="color:var(--muted);font-size:12px">Système de scoring</div>
+      </div>
+      <div class="card bonus">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/24" target="_blank" class="issue-chip">#24</a>
+          <span class="bonus-assignee">pirabaud</span>
+        </div>
+        <div class="card-title" style="color:var(--muted);font-size:12px">Persistance des scores</div>
+      </div>
+      <div class="card bonus">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/25" target="_blank" class="issue-chip">#25</a>
+          <span class="bonus-assignee">arthurfaby</span>
+        </div>
+        <div class="card-title" style="color:var(--muted);font-size:12px">Mode gravité accélérée</div>
+      </div>
+      <div class="card bonus">
+        <div class="card-top">
+          <a href="https://github.com/arthurfaby/red-tetris/issues/26" target="_blank" class="issue-chip">#26</a>
+          <span class="bonus-assignee">pirabaud</span>
+        </div>
+        <div class="card-title" style="color:var(--muted);font-size:12px">Mode pièces invisibles</div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
