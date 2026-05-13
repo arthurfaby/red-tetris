@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createEmptyBoard } from "../../../../../src/lib/game/logic/create-empty-board";
+import { createEmptyBoard } from "@/lib/game/logic/create-empty-board.ts";
 import { Tetromino } from "@red-tetris/shared";
 
 describe("is-in-board.ts", () => {

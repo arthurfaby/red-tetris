@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { isInBoard } from "../../../../../src/lib/game/logic/is-in-board";
 import { GRID_HEIGHT, GRID_WIDTH } from "@red-tetris/shared";
+import { isInBoard } from "@/lib/game/logic/is-in-board";
 
 describe("is-in-board.ts", () => {
   it("should be in board", () => {

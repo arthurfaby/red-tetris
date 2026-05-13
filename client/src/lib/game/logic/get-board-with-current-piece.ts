@@ -3,7 +3,6 @@ import type {
   TetrominoState,
 } from "@/lib/stores/use-tetris-store.ts";
 import { Tetromino, TETROMINOS } from "@red-tetris/shared";
-import { isInBoard } from "@/lib/game/logic/is-in-board.ts";
 
 export function getBoardWithCurrentPiece(
   board: BoardState,
@@ -16,9 +15,7 @@ export function getBoardWithCurrentPiece(
       if (value !== Tetromino.NONE) {
         const boardY = currentPiece.y + dy;
         const boardX = currentPiece.x + dx;
-        if (isInBoard(boardX, boardY)) {
-          newBoard[boardY][boardX] = currentPiece.type;
-        }
+        newBoard[boardY][boardX] = currentPiece.type;
       }
     });
   });
