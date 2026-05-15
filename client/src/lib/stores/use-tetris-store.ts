@@ -1,7 +1,9 @@
 import { create } from "zustand";
 import {
+  DEFAULT_TETROMINO_POSITION,
   GRID_HEIGHT,
   GRID_WIDTH,
+  POINTS_PER_LINE,
   Tetromino,
   type TetrominoType,
 } from "@red-tetris/shared";
@@ -45,8 +47,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
 
   currentPiece: {
     type: Tetromino.L,
-    x: 4,
-    y: 0,
+    ...DEFAULT_TETROMINO_POSITION,
     rotation: 0,
   },
 
@@ -66,8 +67,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     set({
       currentPiece: {
         type: Tetromino.L,
-        x: 4,
-        y: 0,
+        ...DEFAULT_TETROMINO_POSITION,
         rotation: 0,
       },
     });
@@ -136,7 +136,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
 
     // 3. Update score
     set({
-      score: get().score + numberOfLinesDeleted * 1000,
+      score: get().score + numberOfLinesDeleted * POINTS_PER_LINE,
       linesCleared: get().linesCleared + numberOfLinesDeleted,
     });
 
@@ -144,8 +144,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     if (
       !isValidPosition(get().board, {
         type: get().nextPiece,
-        y: 0,
-        x: 4,
+        ...DEFAULT_TETROMINO_POSITION,
         rotation: 0,
       })
     ) {
@@ -155,7 +154,13 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     }
 
     // 5. Update currentPiece with nextPiece
-    set({ currentPiece: { type: get().nextPiece, y: 0, x: 4, rotation: 0 } });
+    set({
+      currentPiece: {
+        type: get().nextPiece,
+        ...DEFAULT_TETROMINO_POSITION,
+        rotation: 0,
+      },
+    });
 
     // 6. Update nextPiece from backend
     // TODO change with backend sequence
