@@ -22,8 +22,10 @@ describe("get-board-with-current-piece.ts", () => {
           (j === 1 && i === 6)
         ) {
           expect(board[j][i]).toEqual(Tetromino.J);
+          expect(emptyBoard[j][i]).toEqual(Tetromino.NONE);
         } else {
           expect(board[j][i]).toEqual(Tetromino.NONE);
+          expect(emptyBoard[j][i]).toEqual(Tetromino.NONE);
         }
       }
     }
@@ -41,6 +43,7 @@ describe("get-board-with-current-piece.ts", () => {
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 20; j++) {
         expect(board[j][i]).toEqual(Tetromino.NONE);
+        expect(emptyBoard[j][i]).toEqual(Tetromino.NONE);
       }
     }
   });

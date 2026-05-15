@@ -38,6 +38,8 @@ describe("TetrisBoard", () => {
     const { container } = render(<TetrisBoard />);
     const grid = container.firstChild as HTMLElement;
     expect(grid).toBeInTheDocument();
-    expect(grid.className).toContain("grid");
+    expect(grid.className).toContain(
+      "grid grid-cols-[repeat(10,32px)] grid-rows-[repeat(20,32px)]",
+    );
   });
 });

@@ -1,6 +1,7 @@
 import { render, cleanup } from "@testing-library/react";
 import { TetrisNextPiece } from "@/components/game/tetris-next-piece.tsx";
 import { Tetromino } from "@red-tetris/shared";
+import { expect } from "vitest";
 
 describe("TetrisNextPiece", () => {
   afterEach(() => cleanup());
@@ -35,26 +36,36 @@ describe("TetrisNextPiece", () => {
   it("renders cells with size-8 class", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.O} />);
     const cells = container.querySelectorAll(".size-8");
+    const grid = container.firstChild as HTMLElement;
     expect(cells.length).toBeGreaterThan(0);
+    expect(grid.children.length).toBe(4);
   });
 
   it("renders for Tetromino.J", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.J} />);
+    const grid = container.firstChild as HTMLElement;
     expect(container.firstChild).toBeInTheDocument();
+    expect(grid.children.length).toBe(6);
   });
 
   it("renders for Tetromino.S", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.S} />);
+    const grid = container.firstChild as HTMLElement;
     expect(container.firstChild).toBeInTheDocument();
+    expect(grid.children.length).toBe(6);
   });
 
   it("renders for Tetromino.T", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.T} />);
+    const grid = container.firstChild as HTMLElement;
     expect(container.firstChild).toBeInTheDocument();
+    expect(grid.children.length).toBe(6);
   });
 
   it("renders for Tetromino.Z", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.Z} />);
+    const grid = container.firstChild as HTMLElement;
     expect(container.firstChild).toBeInTheDocument();
+    expect(grid.children.length).toBe(6);
   });
 });
