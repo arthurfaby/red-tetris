@@ -10,6 +10,8 @@ import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 
 export function TetrisInfoLayout() {
   const nextPiece = useTetrisStore((state) => state.nextPiece);
+  const score = useTetrisStore((state) => state.score);
+  const linesCleared = useTetrisStore((state) => state.linesCleared);
 
   return (
     <div className="flex flex-col gap-6 w-full h-full lg:w-64">
@@ -32,7 +34,7 @@ export function TetrisInfoLayout() {
               Score
             </span>
             <span className="text-2xl font-mono text-primary font-bold">
-              000000
+              {score}
             </span>
           </div>
           <Separator />
@@ -40,7 +42,7 @@ export function TetrisInfoLayout() {
             <span className="text-muted-foreground text-xs font-bold uppercase tracking-widest">
               Lignes
             </span>
-            <span className="text-xl font-mono">0</span>
+            <span className="text-xl font-mono">{linesCleared}</span>
           </div>
         </CardContent>
       </Card>
