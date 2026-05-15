@@ -1,7 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-
-afterEach(() => cleanup());
 import { TetrisInfoLayout } from "@/components/game/layout/tetris-info-layout.tsx";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 import { Tetromino } from "@red-tetris/shared";
@@ -13,8 +10,16 @@ vi.mock("@/components/game/tetris-next-piece.tsx", () => ({
 }));
 
 vi.mock("@/components/ui/card.tsx", () => ({
-  Card: ({ children, className }: { children: React.ReactNode; className?: string }) => (
-    <div data-testid="card" className={className}>{children}</div>
+  Card: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <div data-testid="card" className={className}>
+      {children}
+    </div>
   ),
   CardHeader: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="card-header">{children}</div>
@@ -32,6 +37,8 @@ vi.mock("@/components/ui/separator.tsx", () => ({
 }));
 
 describe("TetrisInfoLayout", () => {
+  afterEach(() => cleanup());
+
   beforeEach(() => {
     useTetrisStore.setState({ nextPiece: Tetromino.I });
   });
@@ -39,21 +46,21 @@ describe("TetrisInfoLayout", () => {
   it("renders TetrisNextPiece with the nextPiece from store", () => {
     render(<TetrisInfoLayout />);
     const nextPieceEl = screen.getByTestId("tetris-next-piece");
-    expect(nextPieceEl).toBeDefined();
+    expect(nextPieceEl).toBeInTheDocument();
     expect(nextPieceEl.getAttribute("data-type")).toBe(String(Tetromino.I));
   });
 
   it("displays static score and lines labels", () => {
     render(<TetrisInfoLayout />);
-    expect(screen.getByText("Score")).toBeDefined();
-    expect(screen.getByText("Lignes")).toBeDefined();
-    expect(screen.getByText("000000")).toBeDefined();
-    expect(screen.getByText("0")).toBeDefined();
+    expect(screen.getByText("Score")).toBeInTheDocument();
+    expect(screen.getByText("Lignes")).toBeInTheDocument();
+    expect(screen.getByText("000000")).toBeInTheDocument();
+    expect(screen.getByText("0")).toBeInTheDocument();
   });
 
   it("displays 'Suivante' section title", () => {
     render(<TetrisInfoLayout />);
-    expect(screen.getByText("Suivante")).toBeDefined();
+    expect(screen.getByText("Suivante")).toBeInTheDocument();
   });
 
   it("renders with a different nextPiece from store", () => {

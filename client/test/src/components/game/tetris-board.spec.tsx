@@ -1,7 +1,5 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
-
-afterEach(() => cleanup());
+import { TetrisBoard } from "@/components/game/tetris-board.tsx";
 
 const { mockStartGame } = vi.hoisted(() => {
   return { mockStartGame: vi.fn() };
@@ -21,9 +19,9 @@ vi.mock("@/lib/stores/use-tetris-store.ts", () => {
   };
 });
 
-import { TetrisBoard } from "@/components/game/tetris-board.tsx";
-
 describe("TetrisBoard", () => {
+  afterEach(() => cleanup());
+
   it("renders 200 cells (20 rows x 10 columns)", () => {
     const { container } = render(<TetrisBoard />);
     const grid = container.firstChild as HTMLElement;
@@ -39,7 +37,7 @@ describe("TetrisBoard", () => {
   it("renders a grid container", () => {
     const { container } = render(<TetrisBoard />);
     const grid = container.firstChild as HTMLElement;
-    expect(grid).toBeDefined();
+    expect(grid).toBeInTheDocument();
     expect(grid.className).toContain("grid");
   });
 });

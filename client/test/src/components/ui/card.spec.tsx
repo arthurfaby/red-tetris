@@ -1,8 +1,4 @@
-import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-
-afterEach(() => cleanup());
-
 import {
   Card,
   CardHeader,
@@ -14,10 +10,12 @@ import {
 } from "@/components/ui/card.tsx";
 
 describe("Card", () => {
+  afterEach(() => cleanup());
+
   it("renders with default size", () => {
     const { container } = render(<Card>Card content</Card>);
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("card");
     expect(el.getAttribute("data-size")).toBe("default");
   });
@@ -39,9 +37,9 @@ describe("CardHeader", () => {
   it("renders correctly", () => {
     const { container } = render(<CardHeader>Header</CardHeader>);
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("card-header");
-    expect(screen.getByText("Header")).toBeDefined();
+    expect(screen.getByText("Header")).toBeInTheDocument();
   });
 });
 
@@ -49,19 +47,21 @@ describe("CardTitle", () => {
   it("renders correctly", () => {
     const { container } = render(<CardTitle>Title</CardTitle>);
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("card-title");
-    expect(screen.getByText("Title")).toBeDefined();
+    expect(screen.getByText("Title")).toBeInTheDocument();
   });
 });
 
 describe("CardDescription", () => {
   it("renders correctly", () => {
-    const { container } = render(<CardDescription>Description</CardDescription>);
+    const { container } = render(
+      <CardDescription>Description</CardDescription>,
+    );
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("card-description");
-    expect(screen.getByText("Description")).toBeDefined();
+    expect(screen.getByText("Description")).toBeInTheDocument();
   });
 });
 
@@ -69,9 +69,9 @@ describe("CardAction", () => {
   it("renders correctly", () => {
     const { container } = render(<CardAction>Action</CardAction>);
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("card-action");
-    expect(screen.getByText("Action")).toBeDefined();
+    expect(screen.getByText("Action")).toBeInTheDocument();
   });
 });
 
@@ -79,9 +79,9 @@ describe("CardContent", () => {
   it("renders correctly", () => {
     const { container } = render(<CardContent>Content</CardContent>);
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("card-content");
-    expect(screen.getByText("Content")).toBeDefined();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 });
 
@@ -89,8 +89,8 @@ describe("CardFooter", () => {
   it("renders correctly", () => {
     const { container } = render(<CardFooter>Footer</CardFooter>);
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("card-footer");
-    expect(screen.getByText("Footer")).toBeDefined();
+    expect(screen.getByText("Footer")).toBeInTheDocument();
   });
 });

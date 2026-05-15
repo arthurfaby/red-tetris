@@ -1,4 +1,3 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
   render,
   screen,
@@ -7,27 +6,7 @@ import {
   renderHook,
 } from "@testing-library/react";
 import type { Context } from "react";
-
-afterEach(() => {
-  cleanup();
-  localStorage.clear();
-});
-
-beforeEach(() => {
-  Object.defineProperty(window, "matchMedia", {
-    writable: true,
-    value: vi.fn().mockImplementation((query: string) => ({
-      matches: query === "(prefers-color-scheme: dark)",
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  });
-});
+import { ThemeProvider, useTheme } from "@/components/theme-provider.tsx";
 
 let useContextOverride: boolean = false;
 
@@ -45,9 +24,28 @@ vi.mock("react", async (importOriginal) => {
   };
 });
 
-import { ThemeProvider, useTheme } from "@/components/theme-provider.tsx";
-
 describe("ThemeProvider", () => {
+  afterEach(() => {
+    cleanup();
+    localStorage.clear();
+  });
+
+  beforeEach(() => {
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: query === "(prefers-color-scheme: dark)",
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+  });
+
   beforeEach(() => {
     useContextOverride = false;
   });
@@ -58,7 +56,7 @@ describe("ThemeProvider", () => {
         <div>child content</div>
       </ThemeProvider>,
     );
-    expect(screen.getByText("child content")).toBeDefined();
+    expect(screen.getByText("child content")).toBeInTheDocument();
   });
 
   it("uses defaultTheme light when no localStorage value", () => {
@@ -184,7 +182,7 @@ describe("useTheme", () => {
       </ThemeProvider>,
     );
 
-    expect(screen.getByText("light")).toBeDefined();
+    expect(screen.getByText("light")).toBeInTheDocument();
   });
 
   it("uses default initialState setTheme (returns null) when called outside provider", () => {

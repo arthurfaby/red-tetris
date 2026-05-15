@@ -1,17 +1,16 @@
-import { describe, it, expect, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 import { TetrisNextPiece } from "@/components/game/tetris-next-piece.tsx";
 import { Tetromino } from "@red-tetris/shared";
 
-afterEach(() => cleanup());
-
 describe("TetrisNextPiece", () => {
+  afterEach(() => cleanup());
+
   it("renders a grid for Tetromino.I (has empty rows filtered out)", () => {
     // I shape[0] = [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]]
     // after filter: [[1,1,1,1]] — 1 row x 4 cols = 4 cells
     const { container } = render(<TetrisNextPiece type={Tetromino.I} />);
     const grid = container.firstChild as HTMLElement;
-    expect(grid).toBeDefined();
+    expect(grid).toBeInTheDocument();
     expect(grid.children.length).toBe(4);
   });
 
@@ -20,7 +19,7 @@ describe("TetrisNextPiece", () => {
     // 2 rows x 2 cols = 4 cells
     const { container } = render(<TetrisNextPiece type={Tetromino.O} />);
     const grid = container.firstChild as HTMLElement;
-    expect(grid).toBeDefined();
+    expect(grid).toBeInTheDocument();
     expect(grid.children.length).toBe(4);
   });
 
@@ -29,7 +28,7 @@ describe("TetrisNextPiece", () => {
     // after filter: [[0,0,3],[3,3,3]] — 2 rows x 3 cols = 6 cells
     const { container } = render(<TetrisNextPiece type={Tetromino.L} />);
     const grid = container.firstChild as HTMLElement;
-    expect(grid).toBeDefined();
+    expect(grid).toBeInTheDocument();
     expect(grid.children.length).toBe(6);
   });
 
@@ -41,21 +40,21 @@ describe("TetrisNextPiece", () => {
 
   it("renders for Tetromino.J", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.J} />);
-    expect(container.firstChild).toBeDefined();
+    expect(container.firstChild).toBeInTheDocument();
   });
 
   it("renders for Tetromino.S", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.S} />);
-    expect(container.firstChild).toBeDefined();
+    expect(container.firstChild).toBeInTheDocument();
   });
 
   it("renders for Tetromino.T", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.T} />);
-    expect(container.firstChild).toBeDefined();
+    expect(container.firstChild).toBeInTheDocument();
   });
 
   it("renders for Tetromino.Z", () => {
     const { container } = render(<TetrisNextPiece type={Tetromino.Z} />);
-    expect(container.firstChild).toBeDefined();
+    expect(container.firstChild).toBeInTheDocument();
   });
 });

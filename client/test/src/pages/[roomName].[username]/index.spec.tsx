@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
-
-afterEach(() => cleanup());
+import Room from "@/pages/[roomName].[username]/index.tsx";
+import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
+import { useParams } from "@/router.ts";
 
 vi.mock("@/router.ts", () => ({
   useParams: vi.fn(() => ({ roomName: "test-room", username: "test-user" })),
@@ -28,15 +28,13 @@ vi.mock("react", async (importOriginal) => {
   };
 });
 
-import Room from "@/pages/[roomName].[username]/index.tsx";
-import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
-import { useParams } from "@/router.ts";
-
 function renderRoom() {
   return render(<Room />);
 }
 
 describe("Room page", () => {
+  afterEach(() => cleanup());
+
   beforeEach(() => {
     useTetrisStore.setState({ isPlaying: false });
     vi.mocked(useParams).mockReturnValue({
@@ -48,27 +46,27 @@ describe("Room page", () => {
 
   it("renders the lobby when isPlaying is false", () => {
     renderRoom();
-    expect(screen.getByText("Red Tetris - test-room")).toBeDefined();
+    expect(screen.getByText("Red Tetris - test-room")).toBeInTheDocument();
   });
 
   it("renders TetrisGame when isPlaying is true", () => {
     useTetrisStore.setState({ isPlaying: true });
     renderRoom();
-    expect(screen.getByTestId("tetris-game")).toBeDefined();
+    expect(screen.getByTestId("tetris-game")).toBeInTheDocument();
   });
 
   it("displays the roomName in the header", () => {
     renderRoom();
-    expect(screen.getByText("Red Tetris - test-room")).toBeDefined();
+    expect(screen.getByText("Red Tetris - test-room")).toBeInTheDocument();
   });
 
   it("lists players including the added username", () => {
     renderRoom();
-    expect(screen.getByText("Player 1")).toBeDefined();
-    expect(screen.getByText("Player 2")).toBeDefined();
-    expect(screen.getByText("Player 3")).toBeDefined();
-    expect(screen.getByText("Player 4")).toBeDefined();
-    expect(screen.getByText("test-user")).toBeDefined();
+    expect(screen.getByText("Player 1")).toBeInTheDocument();
+    expect(screen.getByText("Player 2")).toBeInTheDocument();
+    expect(screen.getByText("Player 3")).toBeInTheDocument();
+    expect(screen.getByText("Player 4")).toBeInTheDocument();
+    expect(screen.getByText("test-user")).toBeInTheDocument();
   });
 
   it("does not add duplicate username (username already in list)", () => {
@@ -92,7 +90,7 @@ describe("Room page", () => {
   it("shows error message when users list is empty", () => {
     useStateOverride = () => [[], vi.fn()];
     renderRoom();
-    expect(screen.getByText("ERROR. SHOULD NOT HAPPEN.")).toBeDefined();
+    expect(screen.getByText("ERROR. SHOULD NOT HAPPEN.")).toBeInTheDocument();
   });
 
   it("handles username with no space (covers ?? empty string fallback for single-word usernames)", () => {
@@ -103,6 +101,6 @@ describe("Room page", () => {
     });
     renderRoom();
     // The empty username is added to the list - just check the component renders
-    expect(screen.getByText("Red Tetris - test-room")).toBeDefined();
+    expect(screen.getByText("Red Tetris - test-room")).toBeInTheDocument();
   });
 });

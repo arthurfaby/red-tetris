@@ -1,4 +1,3 @@
-import { describe, expect, it } from "vitest";
 import { TETROMINO_CLASSES } from "@/lib/game/constants.ts";
 
 describe("constants.ts", () => {

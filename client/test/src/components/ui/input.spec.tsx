@@ -1,15 +1,13 @@
-import { describe, it, expect, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
-
-afterEach(() => cleanup());
-
 import { Input } from "@/components/ui/input.tsx";
 
 describe("Input", () => {
+  afterEach(() => cleanup());
+
   it("renders basic input", () => {
     const { container } = render(<Input />);
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("input");
   });
 

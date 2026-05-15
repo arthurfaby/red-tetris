@@ -1,7 +1,4 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-
-afterEach(() => cleanup());
 import { TetrisSpectrumsLayout } from "@/components/game/layout/tetris-spectrums-layout.tsx";
 
 vi.mock("@/components/game/tetris-spectrum.tsx", () => ({
@@ -32,6 +29,8 @@ vi.mock("@/components/ui/badge.tsx", () => ({
 }));
 
 describe("TetrisSpectrumsLayout", () => {
+  afterEach(() => cleanup());
+
   it("renders 8 opponent slots", () => {
     render(<TetrisSpectrumsLayout />);
     const spectrums = screen.getAllByTestId("tetris-spectrum");
@@ -41,13 +40,13 @@ describe("TetrisSpectrumsLayout", () => {
   it("renders player labels from 'Joueur 1' to 'Joueur 8'", () => {
     render(<TetrisSpectrumsLayout />);
     for (let i = 1; i <= 8; i++) {
-      expect(screen.getByText(`Joueur ${i}`)).toBeDefined();
+      expect(screen.getByText(`Joueur ${i}`)).toBeInTheDocument();
     }
   });
 
   it("renders 'Adversaires' section title", () => {
     render(<TetrisSpectrumsLayout />);
-    expect(screen.getByText("Adversaires")).toBeDefined();
+    expect(screen.getByText("Adversaires")).toBeInTheDocument();
   });
 
   it("renders the badge with opponent count", () => {

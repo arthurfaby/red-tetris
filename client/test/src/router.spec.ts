@@ -1,4 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
+import {
+  Link,
+  Navigate,
+  useModals,
+  useNavigate,
+  useParams,
+  redirect,
+} from "@/router.ts";
 
 vi.mock("@generouted/react-router/client", () => ({
   components: vi.fn(() => ({
@@ -14,8 +21,6 @@ vi.mock("@generouted/react-router/client", () => ({
     redirect: vi.fn(),
   })),
 }));
-
-import { Link, Navigate, useModals, useNavigate, useParams, redirect } from "@/router.ts";
 
 describe("router.ts", () => {
   it("exports Link", () => {

@@ -1,7 +1,4 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-
-afterEach(() => cleanup());
 import { TetrisBoardLayout } from "@/components/game/layout/tetris-board-layout.tsx";
 
 vi.mock("@/components/game/tetris-board.tsx", () => ({
@@ -9,9 +6,11 @@ vi.mock("@/components/game/tetris-board.tsx", () => ({
 }));
 
 describe("TetrisBoardLayout", () => {
+  afterEach(() => cleanup());
+
   it("renders TetrisBoard inside a container div", () => {
     render(<TetrisBoardLayout />);
-    expect(screen.getByTestId("tetris-board")).toBeDefined();
+    expect(screen.getByTestId("tetris-board")).toBeInTheDocument();
   });
 
   it("renders a container with flex layout classes", () => {

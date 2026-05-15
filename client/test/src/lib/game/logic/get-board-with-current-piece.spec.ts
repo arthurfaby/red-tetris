@@ -1,4 +1,3 @@
-import { describe, expect, it } from "vitest";
 import type { TetrominoState } from "@/lib/stores/use-tetris-store.ts";
 import { Tetromino } from "@red-tetris/shared";
 import { createEmptyBoard } from "@/lib/game/logic/create-empty-board.ts";

@@ -1,11 +1,10 @@
-import { describe, it, expect, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 import { TetrisSpectrum } from "@/components/game/tetris-spectrum.tsx";
 import { GRID_HEIGHT } from "@red-tetris/shared";
 
-afterEach(() => cleanup());
-
 describe("TetrisSpectrum", () => {
+  afterEach(() => cleanup());
+
   it("renders GRID_HEIGHT * spectrum.length cells total", () => {
     // spectrum has 10 columns, GRID_HEIGHT rows → 200 cells
     const spectrum = [5, 4, 12, 3, 1, 0, 18, 3, 4, 2];

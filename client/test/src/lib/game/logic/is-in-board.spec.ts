@@ -1,4 +1,3 @@
-import { describe, expect, it } from "vitest";
 import { GRID_HEIGHT, GRID_WIDTH } from "@red-tetris/shared";
 import { isInBoard } from "@/lib/game/logic/is-in-board";
 

@@ -14,5 +14,7 @@ export default defineConfig({
       exclude: ["**/*.spec.{ts,tsx}"],
       provider: "v8",
     },
+    globals: true,
+    setupFiles: ["./vitest.setup.ts"],
   },
 });

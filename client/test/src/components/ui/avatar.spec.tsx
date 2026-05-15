@@ -1,8 +1,4 @@
-import { describe, it, expect, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
-
-afterEach(() => cleanup());
-
 import {
   Avatar,
   AvatarImage,
@@ -13,10 +9,12 @@ import {
 } from "@/components/ui/avatar.tsx";
 
 describe("Avatar", () => {
+  afterEach(() => cleanup());
+
   it("renders with default size", () => {
     const { container } = render(<Avatar />);
     const el = container.firstChild as HTMLElement;
-    expect(el).toBeDefined();
+    expect(el).toBeInTheDocument();
     expect(el.getAttribute("data-slot")).toBe("avatar");
     expect(el.getAttribute("data-size")).toBe("default");
   });

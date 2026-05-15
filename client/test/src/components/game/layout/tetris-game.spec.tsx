@@ -1,7 +1,4 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-
-afterEach(() => cleanup());
 import { TetrisGame } from "@/components/game/layout/tetris-game.tsx";
 
 vi.mock("@/lib/game/hooks/use-keyboard.ts", () => ({
@@ -21,17 +18,17 @@ vi.mock("@/components/game/layout/tetris-spectrums-layout.tsx", () => ({
 }));
 
 describe("TetrisGame", () => {
+  afterEach(() => cleanup());
+
   it("renders all three layout sub-components", () => {
     render(<TetrisGame />);
-    expect(screen.getByTestId("tetris-info-layout")).toBeDefined();
-    expect(screen.getByTestId("tetris-board-layout")).toBeDefined();
-    expect(screen.getByTestId("tetris-spectrums-layout")).toBeDefined();
+    expect(screen.getByTestId("tetris-info-layout")).toBeInTheDocument();
+    expect(screen.getByTestId("tetris-board-layout")).toBeInTheDocument();
+    expect(screen.getByTestId("tetris-spectrums-layout")).toBeInTheDocument();
   });
 
   it("calls useKeyboard on mount", async () => {
-    const { useKeyboard } = await import(
-      "@/lib/game/hooks/use-keyboard.ts"
-    );
+    const { useKeyboard } = await import("@/lib/game/hooks/use-keyboard.ts");
     render(<TetrisGame />);
     expect(useKeyboard).toHaveBeenCalled();
   });
