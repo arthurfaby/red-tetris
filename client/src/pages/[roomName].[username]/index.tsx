@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
   Avatar,
   AvatarBadge,
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { useParams } from "@/router.ts";
 import { TetrisGame } from "@/components/game/layout/tetris-game.tsx";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
-import {socket} from "@/socket.ts";
+import { socket } from "@/socket.ts";
 
 export default function Room() {
   const { roomName, username } = useParams("/:roomName/:username");
@@ -24,13 +24,13 @@ export default function Room() {
     }
     socket.on("player_list", (player_list: string[]) => {
       setPlayers(player_list);
-    })
-    socket.emit("join_room", {room: roomName, username: username});
+    });
+    socket.emit("join_room", { room: roomName, username: username });
 
     return () => {
-      socket.off('player_list')
-    }
-  }, [roomName, setRoom, username])
+      socket.off("player_list");
+    };
+  }, [roomName, setRoom, username]);
 
   if (isPlaying) {
     return (

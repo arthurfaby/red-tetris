@@ -91,7 +91,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     set({
       intervalId: setInterval(() => {
         get().tick();
-      }, 500),
+      }, 1000),
     });
   },
 
