@@ -1,7 +1,7 @@
-import {Server, Socket} from 'socket.io'
+import { Server, Socket } from 'socket.io'
 
 export interface ServerToClientEvents {
-    player_list: (players: string[]) => void;
+    player_list: (players: string[]) => void
 }
 
 export interface ClientToServerEvents {
@@ -10,7 +10,7 @@ export interface ClientToServerEvents {
 }
 
 export interface SocketData {
-    username: string;
+    username: string
 }
 
 export type SocketServer = Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>;
@@ -18,6 +18,6 @@ export type SocketPlayer = Socket<ClientToServerEvents, ServerToClientEvents, {}
 
 declare module 'fastify' {
     interface FastifyInstance {
-        io: SocketServer;
+        io: SocketServer
     }
 }
