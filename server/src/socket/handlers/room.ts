@@ -1,6 +1,7 @@
-import type {RoomSocketClient, RoomSocketServer} from '../../types';
+import {ClientToServerEvents, SocketServer} from '../../types';
+import {Socket} from "socket.io";
 
-export function handlerSocketConnection(socket: RoomSocketClient, io: RoomSocketServer) {
+export function handlerSocketConnection(socket:  Socket<ClientToServerEvents>, io: SocketServer) {
     socket.on('join_room', async (payload) => {
         socket.data.username = payload.username;
         socket.join(payload.room);
