@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button.tsx";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { useNavigate } from "react-router";
 import { Separator } from "@/components/ui/separator.tsx";
+import {socket} from "@/socket.ts";
 
 export default function Index() {
   const [roomName, setRoomName] = useState<string>("");
@@ -14,6 +15,7 @@ export default function Index() {
 
   function handleJoin() {
     const errors: string[] = [];
+
     if (!username) {
       errors.push("Username is required");
     }
