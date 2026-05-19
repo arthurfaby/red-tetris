@@ -13,20 +13,24 @@ import {socket} from "@/socket.ts";
 
 export default function Room() {
   const { roomName, username } = useParams("/:roomName/:username");
-  const [players, setplayers] = useState<string[]>([]);
+  const [players, setPlayers] = useState<string[]>([]);
   const isPlaying = useTetrisStore((state) => state.isPlaying);
   const startGame = useTetrisStore((state) => state.startGame);
+  const setRoom = useTetrisStore((state) => state.setRoom);
 
   useEffect(() => {
+    if (roomName){
+     setRoom(roomName);
+    }
     socket.on("player_list", (player_list: string[]) => {
-      setplayers(player_list);
+      setPlayers(player_list);
     })
     socket.emit("join_room", {room: roomName, username: username});
 
     return () => {
       socket.off('player_list')
     }
-  }, [roomName, username])
+  }, [roomName, setRoom, username])
 
   if (isPlaying) {
     return (
