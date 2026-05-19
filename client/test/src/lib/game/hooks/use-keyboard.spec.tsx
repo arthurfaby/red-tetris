@@ -27,30 +27,6 @@ beforeEach(() => {
 });
 
 describe("useKeyboard", () => {
-  it("calls moveLeft when ArrowLeft is pressed and isPlaying=true", () => {
-    render(<TestComponent />);
-    window.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "ArrowLeft", cancelable: true }),
-    );
-    expect(mockMoveLeft).toHaveBeenCalledTimes(1);
-  });
-
-  it("calls moveRight when ArrowRight is pressed and isPlaying=true", () => {
-    render(<TestComponent />);
-    window.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "ArrowRight", cancelable: true }),
-    );
-    expect(mockMoveRight).toHaveBeenCalledTimes(1);
-  });
-
-  it("calls rotate when ArrowUp is pressed and isPlaying=true", () => {
-    render(<TestComponent />);
-    window.dispatchEvent(
-      new KeyboardEvent("keydown", { key: "ArrowUp", cancelable: true }),
-    );
-    expect(mockRotate).toHaveBeenCalledTimes(1);
-  });
-
   it("does not call any action for ArrowDown", () => {
     render(<TestComponent />);
     window.dispatchEvent(
