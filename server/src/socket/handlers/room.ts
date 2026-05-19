@@ -2,7 +2,10 @@ import {ClientToServerEvents, SocketServer} from '../../types';
 import {Socket} from "socket.io";
 import {RoomsManager} from "../managers/RoomsManager";
 
-export function handlerSocketConnection(socket:  Socket<ClientToServerEvents>, io: SocketServer, roomManager: RoomsManager) {
+export function handlerSocketConnection(
+    socket: SocketClient,
+    io: SocketServer
+, roomManager: RoomsManager) {
     socket.on('join_room', async (payload) => {
         socket.data.username = payload.username;
         socket.join(payload.room);

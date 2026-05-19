@@ -16,6 +16,7 @@ export default function Room() {
   const [players, setPlayers] = useState<string[]>([]);
   const isPlaying = useTetrisStore((state) => state.isPlaying);
   const startGame = useTetrisStore((state) => state.startGame);
+  const isGameOver = useTetrisStore((state) => state.isGameOver);
   const setRoom = useTetrisStore((state) => state.setRoom);
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function Room() {
       <Card className={"w-full max-w-md p-8"}>
         <CardHeader className="text-2xl ">Red Tetris - {roomName}</CardHeader>
         <CardContent className="">
-          {players.length > 0 ? (
+          {!isGameOver && players.length > 0 ? (
             <div className="grid grid-cols-3 gap-4 justify-center">
               {players.map((user) => {
                 const userSplit = user.toUpperCase().split(" ");
@@ -67,6 +68,8 @@ export default function Room() {
                 Start game
               </Button>
             </div>
+          ) : isGameOver ? (
+            <p className="text-red-400">GAME OVER.</p>
           ) : (
             <p className="text-red-400">ERROR. SHOULD NOT HAPPEN.</p>
           )}

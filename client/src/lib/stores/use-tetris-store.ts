@@ -35,10 +35,13 @@ export interface TetrisStore {
 
   intervalId: number;
 
+  resetInterval: () => void;
+
   startGame: () => void;
   moveLeft: () => void;
   moveRight: () => void;
   rotate: () => void;
+  softDrop: () => void;
   tick: () => void;
   lockPiece: () => void;
   setRoom: (room: string) => void;
@@ -65,6 +68,18 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   setRoom: (roomName: string) => set({ room: roomName }),
 
   // --- ACTIONS ---
+  resetInterval: () => {
+    if (get().intervalId) {
+      clearInterval(get().intervalId);
+    }
+
+    set({
+      intervalId: setInterval(() => {
+        get().tick();
+      }, 1000),
+    });
+  },
+
   startGame: () => {
     if (get().isPlaying && !get().isGameOver) return;
     set({ isPlaying: true, isGameOver: false, score: 0, linesCleared: 0 });
@@ -103,6 +118,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       set({ currentPiece: { ...currentPiece, x: currentPiece.x - 1 } });
     }
   },
+
   moveRight: () => {
     const currentPiece = get().currentPiece;
     if (
@@ -111,6 +127,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       set({ currentPiece: { ...currentPiece, x: currentPiece.x + 1 } });
     }
   },
+
   rotate: () => {
     const currentPiece = get().currentPiece;
     const newRotation = (currentPiece.rotation + 1) % 4;
@@ -120,6 +137,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       set({ currentPiece: { ...currentPiece, rotation: newRotation } });
     }
   },
+
   tick: () => {
     const currentPiece = get().currentPiece;
     if (
@@ -129,6 +147,17 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     } else {
       get().lockPiece();
     }
+  },
+
+  softDrop: () => {
+    const currentPiece = get().currentPiece;
+    if (
+      isValidPosition(get().board, { ...currentPiece, y: currentPiece.y + 1 })
+    ) {
+      set({ currentPiece: { ...currentPiece, y: currentPiece.y + 1 } });
+    }
+    get().tick();
+    get().resetInterval();
   },
 
   lockPiece: () => {
