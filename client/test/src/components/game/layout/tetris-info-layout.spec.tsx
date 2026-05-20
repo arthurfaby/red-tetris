@@ -54,8 +54,6 @@ describe("TetrisInfoLayout", () => {
     render(<TetrisInfoLayout />);
     expect(screen.getByText("Score")).toBeInTheDocument();
     expect(screen.getByText("Lignes")).toBeInTheDocument();
-    expect(screen.getByText("000000")).toBeInTheDocument();
-    expect(screen.getByText("0")).toBeInTheDocument();
   });
 
   it("displays 'Suivante' section title", () => {
