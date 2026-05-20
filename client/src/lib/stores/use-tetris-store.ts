@@ -36,7 +36,6 @@ export interface TetrisStore {
   intervalId: number;
 
   resetInterval: () => void;
-
   startGame: () => void;
   moveLeft: () => void;
   moveRight: () => void;
@@ -79,30 +78,21 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       }, 1000),
     });
   },
-
   startGame: () => {
     if (get().isPlaying && !get().isGameOver) return;
     set({ isPlaying: true, isGameOver: false, score: 0, linesCleared: 0 });
     set({ board: createEmptyBoard(GRID_HEIGHT, GRID_WIDTH) });
-    // TODO change with backend sequence (current and next)
-    set({
-      currentPiece: {
-        type: Tetromino.L,
-        ...DEFAULT_TETROMINO_POSITION,
-        rotation: 0,
-      },
+    socket.on("start_piece", (start_piece, next_piece) => {
+      set({
+        currentPiece: {
+          type: start_piece,
+          ...DEFAULT_TETROMINO_POSITION,
+          rotation: 0,
+        },
+      });
+      set({ nextPiece: next_piece });
     });
-    const randomIndex = Math.floor(Math.random() * 7);
-    const randomPiece = [
-      Tetromino.I,
-      Tetromino.J,
-      Tetromino.L,
-      Tetromino.O,
-      Tetromino.S,
-      Tetromino.T,
-      Tetromino.Z,
-    ][randomIndex];
-    set({ nextPiece: randomPiece });
+    socket.emit("start_piece", get().room);
     set({
       intervalId: setInterval(() => {
         get().tick();
@@ -118,7 +108,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       set({ currentPiece: { ...currentPiece, x: currentPiece.x - 1 } });
     }
   },
-
   moveRight: () => {
     const currentPiece = get().currentPiece;
     if (
@@ -127,7 +116,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       set({ currentPiece: { ...currentPiece, x: currentPiece.x + 1 } });
     }
   },
-
   rotate: () => {
     const currentPiece = get().currentPiece;
     const newRotation = (currentPiece.rotation + 1) % 4;
@@ -159,7 +147,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     get().tick();
     get().resetInterval();
   },
-
   lockPiece: () => {
     // 1. Merge currentPiece in board
     const newBoard = getBoardWithCurrentPiece(get().board, get().currentPiece);
@@ -198,18 +185,9 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     });
 
     // 6. Update nextPiece from backend
-    // TODO change with backend sequence
     socket.emit("next_piece", get().room);
-    const randomIndex = Math.floor(Math.random() * 7);
-    const randomPiece = [
-      Tetromino.I,
-      Tetromino.J,
-      Tetromino.L,
-      Tetromino.O,
-      Tetromino.S,
-      Tetromino.T,
-      Tetromino.Z,
-    ][randomIndex];
-    set({ nextPiece: randomPiece });
+    socket.on("next_piece", (next_piece) => {
+      set({ nextPiece: next_piece });
+    });
   },
 }));
