@@ -20,8 +20,8 @@ export default function Room() {
   const setRoom = useTetrisStore((state) => state.setRoom);
 
   useEffect(() => {
-    if (roomName){
-     setRoom(roomName);
+    if (roomName) {
+      setRoom(roomName);
     }
     socket.on("player_list", (player_list: string[]) => {
       setPlayers(player_list);

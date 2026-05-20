@@ -12,7 +12,7 @@ import { isValidPosition } from "@/lib/game/logic/is-valid-position.ts";
 import { getBoardWithCurrentPiece } from "@/lib/game/logic/get-board-with-current-piece.ts";
 import { getNumberOfLinesToDelete } from "@/lib/game/logic/get-number-of-lines-to-delete.ts";
 import { clearLines } from "@/lib/game/logic/clear-lines.ts";
-import {socket} from "@/socket.ts";
+import { socket } from "@/socket.ts";
 
 export type BoardState = TetrominoType[][];
 
@@ -199,7 +199,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
 
     // 6. Update nextPiece from backend
     // TODO change with backend sequence
-    socket.emit("next_piece", get().room)
+    socket.emit("next_piece", get().room);
     const randomIndex = Math.floor(Math.random() * 7);
     const randomPiece = [
       Tetromino.I,
