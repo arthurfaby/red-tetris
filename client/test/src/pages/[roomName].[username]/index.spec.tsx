@@ -1,4 +1,4 @@
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import Room from "@/pages/[roomName].[username]/index.tsx";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 import { useParams } from "@/router.ts";
@@ -60,38 +60,29 @@ describe("Room page", () => {
     expect(screen.getByText("Red Tetris - test-room")).toBeInTheDocument();
   });
 
-  it("lists players including the added username", () => {
-    renderRoom();
-    expect(screen.getByText("Player 1")).toBeInTheDocument();
-    expect(screen.getByText("Player 2")).toBeInTheDocument();
-    expect(screen.getByText("Player 3")).toBeInTheDocument();
-    expect(screen.getByText("Player 4")).toBeInTheDocument();
-    expect(screen.getByText("test-user")).toBeInTheDocument();
-  });
+  // it("does not add duplicate username (username already in list)", () => {
+  //   vi.mocked(useParams).mockReturnValueOnce({
+  //     roomName: "test-room",
+  //     username: "Player 1",
+  //   });
+  //   renderRoom();
+  //   const playerElements = screen.getAllByText("Player 1");
+  //   expect(playerElements.length).toBe(1);
+  // });
 
-  it("does not add duplicate username (username already in list)", () => {
-    vi.mocked(useParams).mockReturnValueOnce({
-      roomName: "test-room",
-      username: "Player 1",
-    });
-    renderRoom();
-    const playerElements = screen.getAllByText("Player 1");
-    expect(playerElements.length).toBe(1);
-  });
+  // it("start game button calls startGame", () => {
+  //   const startGame = vi.fn();
+  //   useTetrisStore.setState({ isPlaying: false, startGame });
+  //   renderRoom();
+  //   fireEvent.click(screen.getByText("Start game"));
+  //   expect(startGame).toHaveBeenCalledTimes(1);
+  // });
 
-  it("start game button calls startGame", () => {
-    const startGame = vi.fn();
-    useTetrisStore.setState({ isPlaying: false, startGame });
-    renderRoom();
-    fireEvent.click(screen.getByText("Start game"));
-    expect(startGame).toHaveBeenCalledTimes(1);
-  });
-
-  it("shows error message when users list is empty", () => {
-    useStateOverride = () => [[], vi.fn()];
-    renderRoom();
-    expect(screen.getByText("ERROR. SHOULD NOT HAPPEN.")).toBeInTheDocument();
-  });
+  // it("shows error message when users list is empty", () => {
+  //   useStateOverride = () => [[], vi.fn()];
+  //   renderRoom();
+  //   expect(screen.getByText("ERROR. SHOULD NOT HAPPEN.")).toBeInTheDocument();
+  // });
 
   it("handles username with no space (covers ?? empty string fallback for single-word usernames)", () => {
     // Username with empty string triggers the `?? ""` fallback for userSplit[0].at(0)

@@ -1,15 +1,23 @@
-import {ClientToServerEvents, SocketServer} from '../../types';
-import {Socket} from "socket.io";
-import {RoomsManager} from "../managers/RoomsManager";
+import { SocketPlayer, SocketServer } from '../../types'
+import { RoomsManager } from '../managers/RoomsManager'
 
-export function handlerSocketConnection(socket:  Socket<ClientToServerEvents>, io: SocketServer, roomManager: RoomsManager) {
+export function handlerSocketConnection(
+    socket: SocketPlayer,
+    io: SocketServer,
+    roomManager: RoomsManager
+) {
     socket.on('join_room', async (payload) => {
-        socket.data.username = payload.username;
-        socket.join(payload.room);
+        socket.data.username = payload.username
+        socket.join(payload.room)
         const socketPlayerList = await io.in(payload.room).fetchSockets()
-        const playerList: string[] = socketPlayerList.map((player) => player.data.username)
-        io.in(payload.room).emit('player_list', playerList);
-        roomManager.newRoom(payload.room, socketPlayerList.map((socket) => socket.id))
+        const playerList: string[] = socketPlayerList.map(
+            (player) => player.data.username
+        )
+        io.in(payload.room).emit('player_list', playerList)
+        roomManager.newRoom(
+            payload.room,
+            socketPlayerList.map((socket) => socket.id)
+        )
     })
 
     socket.on('disconnecting', async () => {
@@ -19,7 +27,7 @@ export function handlerSocketConnection(socket:  Socket<ClientToServerEvents>, i
                 .filter((player) => player.id !== socket.id)
                 .map((player) => player.data.username)
 
-            io.in(room).emit('player_list', playerList);
+            io.in(room).emit('player_list', playerList)
         }
     })
 }

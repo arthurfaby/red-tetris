@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import {
   Avatar,
   AvatarBadge,
@@ -9,28 +9,29 @@ import { Button } from "@/components/ui/button.tsx";
 import { useParams } from "@/router.ts";
 import { TetrisGame } from "@/components/game/layout/tetris-game.tsx";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
-import {socket} from "@/socket.ts";
+import { socket } from "@/socket.ts";
 
 export default function Room() {
   const { roomName, username } = useParams("/:roomName/:username");
   const [players, setPlayers] = useState<string[]>([]);
   const isPlaying = useTetrisStore((state) => state.isPlaying);
   const startGame = useTetrisStore((state) => state.startGame);
+  const isGameOver = useTetrisStore((state) => state.isGameOver);
   const setRoom = useTetrisStore((state) => state.setRoom);
 
   useEffect(() => {
-    if (roomName){
-     setRoom(roomName);
+    if (roomName) {
+      setRoom(roomName);
     }
     socket.on("player_list", (player_list: string[]) => {
       setPlayers(player_list);
-    })
-    socket.emit("join_room", {room: roomName, username: username});
+    });
+    socket.emit("join_room", { room: roomName, username: username });
 
     return () => {
-      socket.off('player_list')
-    }
-  }, [roomName, setRoom, username])
+      socket.off("player_list");
+    };
+  }, [roomName, setRoom, username]);
 
   if (isPlaying) {
     return (
@@ -45,7 +46,7 @@ export default function Room() {
       <Card className={"w-full max-w-md p-8"}>
         <CardHeader className="text-2xl ">Red Tetris - {roomName}</CardHeader>
         <CardContent className="">
-          {players.length > 0 ? (
+          {!isGameOver && players.length > 0 ? (
             <div className="grid grid-cols-3 gap-4 justify-center">
               {players.map((user) => {
                 const userSplit = user.toUpperCase().split(" ");
@@ -67,6 +68,8 @@ export default function Room() {
                 Start game
               </Button>
             </div>
+          ) : isGameOver ? (
+            <p className="text-red-400">GAME OVER.</p>
           ) : (
             <p className="text-red-400">ERROR. SHOULD NOT HAPPEN.</p>
           )}
