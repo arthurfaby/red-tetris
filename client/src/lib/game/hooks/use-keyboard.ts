@@ -9,7 +9,6 @@ export function useKeyboard() {
   const isPlaying = useTetrisStore((state) => state.isPlaying);
   const isGameOver = useTetrisStore((state) => state.isGameOver);
 
-  // On utilise des refs pour éviter de recréer la boucle d'animation à chaque render
   const actionsRef = useRef({
     moveLeft,
     moveRight,
@@ -19,7 +18,6 @@ export function useKeyboard() {
     isGameOver,
   });
 
-  // On met à jour les refs à chaque changement pour que la boucle ait toujours les fonctions fraîches
   useEffect(() => {
     actionsRef.current = {
       moveLeft,
@@ -32,13 +30,11 @@ export function useKeyboard() {
   }, [moveLeft, moveRight, softDrop, rotate, isPlaying, isGameOver]);
 
   useEffect(() => {
-    // Un Set pour stocker les touches actuellement enfoncées
     const pressedKeys = new Set<string>();
     let animationFrameId: number;
     let lastTick = 0;
 
-    // Configuration de la vitesse de répétition (en millisecondes)
-    const MOVE_DELAY = 100; // Vitesse du déplacement latéral et du soft drop
+    const MINIMUM_TIME_BETWEEN_TWO_UPDATES_IN_MS = 100;
 
     const handleKeyDown = (event: KeyboardEvent) => {
       const { isPlaying, isGameOver, rotate } = actionsRef.current;
@@ -49,13 +45,11 @@ export function useKeyboard() {
         event.preventDefault();
       }
 
-      // Cas particulier : La rotation (ArrowUp)
-      // On veut qu'elle ne se déclenche QU'UNE SEULE FOIS par appui physique
+      // Unique case : rotation (ArrowUp) – We want to rotate only once per press
       if (event.key === "ArrowUp" && !pressedKeys.has("ArrowUp")) {
         rotate();
       }
 
-      // On enregistre que la touche est enfoncée
       pressedKeys.add(event.key);
     };
 
@@ -63,14 +57,12 @@ export function useKeyboard() {
       pressedKeys.delete(event.key);
     };
 
-    // La boucle magique qui tourne en tâche de fond à ~60fps
     const loop = (timestamp: number) => {
       const { isPlaying, isGameOver, moveLeft, moveRight, softDrop } =
         actionsRef.current;
 
       if (isPlaying && !isGameOver) {
-        // On limite la vitesse de répétition pour que le bloc ne fonce pas à la vitesse de l'éclair
-        if (timestamp - lastTick >= MOVE_DELAY) {
+        if (timestamp - lastTick >= MINIMUM_TIME_BETWEEN_TWO_UPDATES_IN_MS) {
           if (pressedKeys.has("ArrowLeft")) moveLeft();
           if (pressedKeys.has("ArrowRight")) moveRight();
           if (pressedKeys.has("ArrowDown")) softDrop();
@@ -82,18 +74,15 @@ export function useKeyboard() {
       animationFrameId = requestAnimationFrame(loop);
     };
 
-    // Écouteurs d'événements
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
-    // Lancement de la boucle
     animationFrameId = requestAnimationFrame(loop);
 
-    // Nettoyage complet au démontage du hook
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []); // Tableau de dépendances vide, tout passe par les refs pour une stabilité maximale
+  }, []);
 }
