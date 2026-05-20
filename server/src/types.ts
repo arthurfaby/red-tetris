@@ -1,4 +1,4 @@
-import { Server } from 'socket.io'
+import {Server, Socket} from 'socket.io'
 
 export interface ServerToClientEvents {
     player_list: (players: string[]) => void;
@@ -6,6 +6,7 @@ export interface ServerToClientEvents {
 
 export interface ClientToServerEvents {
     join_room: (payload: { username: string; room: string }) => void;
+    next_piece: (room: string) => void;
 }
 
 export interface SocketData {
@@ -13,6 +14,7 @@ export interface SocketData {
 }
 
 export type SocketServer = Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>;
+export type SocketPlayer = Socket<ClientToServerEvents, ServerToClientEvents, {}, SocketData>;
 
 declare module 'fastify' {
     interface FastifyInstance {
