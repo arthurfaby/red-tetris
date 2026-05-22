@@ -15,6 +15,7 @@ export interface ClientToServerEvents {
 
 export interface SocketData {
     username: string
+    host: boolean
 }
 
 export type SocketServer = Server<

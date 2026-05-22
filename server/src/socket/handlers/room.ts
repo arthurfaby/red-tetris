@@ -8,6 +8,7 @@ export function handlerSocketConnection(
 ) {
     socket.on('join_room', async (payload) => {
         socket.data.username = payload.username
+        socket.data.host = false
         socket.join(payload.room)
         const socketPlayerList = await io.in(payload.room).fetchSockets()
         const playerList: string[] = socketPlayerList.map(
@@ -26,7 +27,6 @@ export function handlerSocketConnection(
             const playerList: string[] = socketOldPlayerList
                 .filter((player) => player.id !== socket.id)
                 .map((player) => player.data.username)
-
             io.in(room).emit('player_list', playerList)
         }
     })

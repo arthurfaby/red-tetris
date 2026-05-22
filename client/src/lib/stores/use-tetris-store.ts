@@ -36,6 +36,7 @@ export interface TetrisStore {
   intervalId: number;
 
   resetInterval: () => void;
+
   startGame: () => void;
   moveLeft: () => void;
   moveRight: () => void;
