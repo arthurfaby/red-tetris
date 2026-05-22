@@ -1,5 +1,5 @@
-import {buildApp} from "./app";
-import {registerSocketHandlers} from "./socket";
+import { buildApp } from './app'
+import { registerSocketHandlers } from './socket'
 
 const start = async () => {
     try {
