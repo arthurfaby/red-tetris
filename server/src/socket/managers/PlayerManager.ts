@@ -25,10 +25,6 @@ export class PlayerManager {
         return player
     }
 
-    getPlayer(playerId: string) {
-        return this.#players.find((player) => player.id === playerId)
-    }
-
     getSocket(playerId: string) {
         return this.#sockets.get(playerId)
     }
