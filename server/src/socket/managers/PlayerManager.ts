@@ -10,6 +10,10 @@ export class PlayerManager {
         this.#sockets = new Map()
     }
 
+    get players(): Player[] {
+        return this.#players
+    }
+
     addOrUpdatePlayer(player: Player, socket: SocketPlayer): Player {
         const findPlayer = this.#players.find((p) => p.id === player.id)
         if (findPlayer) {
@@ -19,6 +23,10 @@ export class PlayerManager {
         this.#players.push(player)
         this.#sockets.set(player.id, socket)
         return player
+    }
+
+    getPlayer(playerId: string) {
+        return this.#players.find((player) => player.id === playerId)
     }
 
     getSocket(playerId: string) {
