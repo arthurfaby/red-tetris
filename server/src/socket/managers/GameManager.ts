@@ -12,7 +12,7 @@ export class GameManager {
     joinGame(gameId: string, player: Player) {
         const game = this.#games.get(gameId)
         if (!game) {
-            const newGame = new Game(gameId, player)
+            const newGame = new Game(player)
             this.#games.set(gameId, newGame)
         } else {
             game.addPlayer(player)
