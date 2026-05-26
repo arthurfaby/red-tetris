@@ -13,7 +13,6 @@ export const registerSocketHandlers = (app: FastifyInstance) => {
     const playerManager = new PlayerManager()
     app.io.on('connection', (socket: SocketPlayer) => {
         app.log.info(`Client connected: ${socket.id}`)
-        console.log('CLIENT CONNECTED', socket.id)
         const newPlayer = new Player(socket.id, socket.id)
         playerManager.addOrUpdatePlayer(newPlayer, socket)
         handlerSocketConnection(socket, app.io, gameManager, playerManager)

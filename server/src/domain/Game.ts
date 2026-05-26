@@ -18,7 +18,7 @@ export class Game {
     }
 
     addPlayer(player: Player) {
-        if (this.#playerList.find((p) => p.id === player.id)) return
+        if (this.#playerList.some((p) => p.id === player.id)) return
         this.#playerList.push(player)
     }
 

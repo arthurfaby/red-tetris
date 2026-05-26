@@ -24,11 +24,9 @@ export class GameManager {
         if (!game) return
 
         game.removePlayer(playerId)
-    }
-
-    isLeader(gameId: string, playerId: string) {
-        const game = this.#games.get(gameId)
-        return !!game?.isLeader(playerId)
+        if (game.playerList.length === 0) {
+            this.#games.delete(gameId)
+        }
     }
 
     getLeader(gameId: string) {
