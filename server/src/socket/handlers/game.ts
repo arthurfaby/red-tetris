@@ -3,7 +3,6 @@ import { RoomsManager } from '../managers/RoomsManager'
 
 export function handlerGame(socket: SocketPlayer, roomManager: RoomsManager) {
     socket.on('start_game', async (gameId: string) => {
-        console.log('START GAME')
         if (!socket.rooms.has(gameId)) {
             return
         }

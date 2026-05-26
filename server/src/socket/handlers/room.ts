@@ -2,6 +2,7 @@ import { SocketPlayer, SocketServer } from '@red-tetris/shared'
 import { GameManager } from '../managers/GameManager'
 import { PlayerManager } from '../managers/PlayerManager'
 import { handleNewLeader } from '../handle-new-leader'
+import { handlePrintError } from '../handle-print-error'
 
 export function handlerSocketConnection(
     socket: SocketPlayer,
@@ -10,56 +11,61 @@ export function handlerSocketConnection(
     playerManager: PlayerManager
 ) {
     socket.on('join_game', (payload) => {
-        if (!payload.username || !payload.gameId) return
+        try {
+            if (!payload.username || !payload.gameId) return
 
-        const username = payload.username
-        const gameId = payload.gameId
-        const playerId = socket.id
-        const player = playerManager.getPlayer(playerId)
-        if (!player) return
+            const player = playerManager.getPlayerOrFail(socket.id)
 
-        playerManager.updatePlayer(playerId, { username })
+            playerManager.updatePlayer(player.id, {
+                username: payload.username,
+            })
 
-        // Join socket room
-        socket.data.username = username
-        socket.data.gameId = gameId
-        socket.join(gameId)
+            socket.data.gameId = payload.gameId
+            socket.join(payload.gameId)
 
-        // Join game
-        gameManager.joinGame(gameId, player)
-        const leader = gameManager.getLeader(gameId)
+            gameManager.joinGame(payload.gameId, player)
+            const leader = gameManager.getLeader(payload.gameId)
 
-        // Emit events
-        socket.emit('set_leader', leader!.id)
-        io.in(gameId).emit('player_list', gameManager.getPlayerList(gameId))
+            socket.emit('set_leader', leader!.id)
+            io.in(payload.gameId).emit(
+                'player_list',
+                gameManager.getPlayerList(payload.gameId)
+            )
+        } catch (e: unknown) {
+            handlePrintError(e)
+        }
     })
 
     socket.on('leave_game', (gameId) => {
-        const playerId = socket.id
-        const player = playerManager.getPlayer(playerId)
-        if (!player) return
+        try {
+            const player = playerManager.getPlayerOrFail(socket.id)
 
-        // Leave socket room
-        socket.leave(gameId)
+            socket.leave(gameId)
 
-        // Leave game
-        gameManager.leaveGame(gameId, player.id)
+            gameManager.leaveGame(gameId, player.id)
 
-        io.in(gameId).emit('player_list', gameManager.getPlayerList(gameId))
-        handleNewLeader(gameId, gameManager, playerManager)
+            io.in(gameId).emit('player_list', gameManager.getPlayerList(gameId))
+            handleNewLeader(gameId, gameManager, playerManager)
+        } catch (e: unknown) {
+            handlePrintError(e)
+        }
     })
 
-    socket.on('disconnecting', async () => {
-        const gameId = socket.data.gameId
-        const playerId = socket.id
-        const player = playerManager.getPlayer(playerId)
-        if (!player || !gameId) return
+    socket.on('disconnecting', () => {
+        try {
+            const player = playerManager.getPlayerOrFail(socket.id)
 
-        socket.leave(gameId)
+            socket.leave(socket.data.gameId)
 
-        playerManager.removePlayer(playerId)
-        gameManager.leaveGame(gameId, playerId)
-        io.in(gameId).emit('player_list', gameManager.getPlayerList(gameId))
-        handleNewLeader(gameId, gameManager, playerManager)
+            playerManager.removePlayer(player.id)
+            gameManager.leaveGame(socket.data.gameId, player.id)
+            io.in(socket.data.gameId).emit(
+                'player_list',
+                gameManager.getPlayerList(socket.data.gameId)
+            )
+            handleNewLeader(socket.data.gameId, gameManager, playerManager)
+        } catch (e: unknown) {
+            handlePrintError(e)
+        }
     })
 }

@@ -29,11 +29,6 @@ export class GameManager {
         }
     }
 
-    isLeader(gameId: string, playerId: string) {
-        const game = this.#games.get(gameId)
-        return !!game?.isLeader(playerId)
-    }
-
     getLeader(gameId: string) {
         const game = this.#games.get(gameId)
         if (!game) return null
