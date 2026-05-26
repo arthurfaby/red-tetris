@@ -21,6 +21,7 @@ export interface ClientToServerEvents {
 }
 
 export interface SocketData {
+    username: string
     gameId: string
 }
 
