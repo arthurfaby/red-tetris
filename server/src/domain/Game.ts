@@ -13,10 +13,6 @@ export class Game {
         return this.#playerList
     }
 
-    get roomId() {
-        return this.#roomId
-    }
-
     addPlayer(player: Player) {
         if (this.#playerList.some((p) => p.id === player.id)) return
         this.#playerList.push(player)
