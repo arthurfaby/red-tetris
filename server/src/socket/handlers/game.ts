@@ -1,12 +1,13 @@
-import { SocketPlayer } from '../../types'
+import { SocketPlayer } from '@red-tetris/shared'
 import { RoomsManager } from '../managers/RoomsManager'
 
 export function handlerGame(socket: SocketPlayer, roomManager: RoomsManager) {
-    socket.on('start_piece', async (room: string) => {
-        if (!socket.rooms.has(room)) {
+    socket.on('start_game', async (gameId: string) => {
+        console.log('START GAME')
+        if (!socket.rooms.has(gameId)) {
             return
         }
-        const piece = roomManager.getPiece(room)
+        const piece = roomManager.getPiece(gameId)
         if (piece === undefined) {
             return
         }
@@ -14,6 +15,7 @@ export function handlerGame(socket: SocketPlayer, roomManager: RoomsManager) {
         const next_piece = piece.getTetromino(socket.id)
         socket.emit('start_piece', start_piece, next_piece)
     })
+
     socket.on('next_piece', async (room: string) => {
         if (!socket.rooms.has(room)) {
             return

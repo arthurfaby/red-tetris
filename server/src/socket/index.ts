@@ -1,15 +1,22 @@
 import { FastifyInstance } from 'fastify'
 import { handlerSocketConnection } from './handlers/room'
-import { ClientToServerEvents } from '../types'
-import { Socket } from 'socket.io'
 import { RoomsManager } from './managers/RoomsManager'
 import { handlerGame } from './handlers/game'
+import { GameManager } from './managers/GameManager'
+import { PlayerManager } from './managers/PlayerManager'
+import { Player } from '../domain/Player'
+import { SocketPlayer } from '@red-tetris/shared'
 
 export const registerSocketHandlers = (app: FastifyInstance) => {
+    const gameManager = new GameManager()
     const roomsManager = new RoomsManager()
-    app.io.on('connection', (socket: Socket<ClientToServerEvents>) => {
+    const playerManager = new PlayerManager()
+    app.io.on('connection', (socket: SocketPlayer) => {
         app.log.info(`Client connected: ${socket.id}`)
-        handlerSocketConnection(socket, app.io, roomsManager)
+        console.log('CLIENT CONNECTED', socket.id)
+        const newPlayer = new Player(socket.id, socket.id)
+        playerManager.addOrUpdatePlayer(newPlayer, socket)
+        handlerSocketConnection(socket, app.io, gameManager, playerManager)
         handlerGame(socket, roomsManager)
     })
 }
