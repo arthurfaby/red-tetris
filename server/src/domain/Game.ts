@@ -1,11 +1,9 @@
 import { Player } from './Player'
 
 export class Game {
-    #roomId: string
     #playerList: Player[]
 
-    constructor(room: string, leader: Player) {
-        this.#roomId = room
+    constructor(leader: Player) {
         this.#playerList = [leader]
     }
 
@@ -22,9 +20,5 @@ export class Game {
         this.#playerList = this.#playerList.filter(
             (player) => player.id !== playerIdToRemove
         )
-    }
-
-    isLeader(playerId: string) {
-        return this.#playerList[0].id === playerId
     }
 }
