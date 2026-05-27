@@ -6,9 +6,8 @@ const start = async () => {
         const app = await buildApp()
         registerSocketHandlers(app)
 
-        // TODO return index.html and bundle.js of the frontend here
-
         await app.listen({ port: 3000, host: '0.0.0.0' })
+        app.log.level = 'error'
 
         app.log.info('server ready on http://localhost:3000')
     } catch (err) {

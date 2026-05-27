@@ -37,7 +37,7 @@ export interface TetrisStore {
 
   resetInterval: () => void;
 
-  startGame: () => void;
+  startGame: (startPiece: TetrominoType, nextPiece: TetrominoType) => void;
   moveLeft: () => void;
   moveRight: () => void;
   rotate: () => void;
@@ -74,28 +74,25 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     }
 
     set({
-      intervalId: setInterval(() => {
+      intervalId: +setInterval(() => {
         get().tick();
       }, 1000),
     });
   },
-  startGame: () => {
+  startGame: (startPiece: TetrominoType, nextPiece: TetrominoType) => {
     if (get().isPlaying && !get().isGameOver) return;
     set({ isPlaying: true, isGameOver: false, score: 0, linesCleared: 0 });
     set({ board: createEmptyBoard(GRID_HEIGHT, GRID_WIDTH) });
-    socket.on("start_piece", (start_piece, next_piece) => {
-      set({
-        currentPiece: {
-          type: start_piece,
-          ...DEFAULT_TETROMINO_POSITION,
-          rotation: 0,
-        },
-      });
-      set({ nextPiece: next_piece });
-    });
-    socket.emit("start_piece", get().room);
     set({
-      intervalId: setInterval(() => {
+      currentPiece: {
+        type: startPiece,
+        ...DEFAULT_TETROMINO_POSITION,
+        rotation: 0,
+      },
+    });
+    set({ nextPiece });
+    set({
+      intervalId: +setInterval(() => {
         get().tick();
       }, 1000),
     });
@@ -186,7 +183,10 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     });
 
     // 6. Update nextPiece from backend
-    socket.emit("next_piece", get().room);
+    const roomId = get().room;
+    if (roomId) {
+      socket.emit("next_piece", roomId);
+    }
     socket.on("next_piece", (next_piece) => {
       set({ nextPiece: next_piece });
     });
