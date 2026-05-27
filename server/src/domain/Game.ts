@@ -1,17 +1,24 @@
+import { Player } from './Player'
+
 export class Game {
-    private readonly room: string
-    private readonly listPlayer: string[]
+    #playerList: Player[]
 
-    constructor(room: string, listPlayer: string[]) {
-        this.room = room
-        this.listPlayer = listPlayer
+    constructor(leader: Player) {
+        this.#playerList = [leader]
     }
 
-    public get ListPlayer() {
-        return this.listPlayer
+    get playerList() {
+        return this.#playerList
     }
 
-    public get Room() {
-        return this.room
+    addPlayer(player: Player) {
+        if (this.#playerList.some((p) => p.id === player.id)) return
+        this.#playerList.push(player)
+    }
+
+    removePlayer(playerIdToRemove: string) {
+        this.#playerList = this.#playerList.filter(
+            (player) => player.id !== playerIdToRemove
+        )
     }
 }
