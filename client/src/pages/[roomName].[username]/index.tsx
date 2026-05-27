@@ -23,7 +23,7 @@ export default function Room() {
   const setRoom = useTetrisStore((state) => state.setRoom);
 
   const handleStartGame = () => {
-    socket.emit("start_game", socket.id!);
+    socket.emit("start_game", roomName);
   };
 
   useEffect(() => {
