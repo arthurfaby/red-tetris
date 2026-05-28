@@ -7,9 +7,8 @@ export function handlerGame(socket: SocketPlayer, gameManager: GameManager) {
             return
         }
         const piece = gameManager.getPiece(gameId)
-        if (piece === undefined) {
-            return
-        }
+        if (!piece ) return
+
         const startPiece = piece.getTetromino(socket.id)
         const nextPiece = piece.getTetromino(socket.id)
         socket.emit('start_piece', startPiece, nextPiece)
@@ -20,9 +19,7 @@ export function handlerGame(socket: SocketPlayer, gameManager: GameManager) {
             return
         }
         const piece = gameManager.getPiece(room)
-        if (piece === undefined) {
-            return
-        }
+        if (!piece) return
         const new_piece = piece.getTetromino(socket.id)
         socket.emit('next_piece', new_piece)
     })
