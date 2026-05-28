@@ -5,11 +5,8 @@ import { getBoardWithCurrentPiece } from "@/lib/game/logic/get-board-with-curren
 export function TetrisBoard() {
   const board = useTetrisStore((state) => state.board);
   const currentPiece = useTetrisStore((state) => state.currentPiece);
-  const startGame = useTetrisStore((state) => state.startGame);
 
   const displayBoard = getBoardWithCurrentPiece(board, currentPiece);
-
-  startGame();
 
   return (
     <div className="grid grid-cols-[repeat(10,32px)] grid-rows-[repeat(20,32px)]">
