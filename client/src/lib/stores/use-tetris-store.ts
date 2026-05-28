@@ -42,6 +42,7 @@ export interface TetrisStore {
   moveRight: () => void;
   rotate: () => void;
   softDrop: () => void;
+  hardDrop: () => void;
   tick: () => void;
   lockPiece: () => void;
   setRoom: (room: string) => void;
@@ -145,6 +146,17 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     get().tick();
     get().resetInterval();
   },
+
+  hardDrop: async ()  => {
+    let currentPiece = get().currentPiece;
+    while (isValidPosition(get().board, { ...currentPiece, y: currentPiece.y + 1})) {
+      currentPiece = { ...currentPiece, y: currentPiece.y + 1 };
+      set({ currentPiece });
+      await new Promise(resolve => setTimeout(resolve, 0));
+    }
+    get().lockPiece();
+  },
+
   lockPiece: () => {
     // 1. Merge currentPiece in board
     const newBoard = getBoardWithCurrentPiece(get().board, get().currentPiece);
