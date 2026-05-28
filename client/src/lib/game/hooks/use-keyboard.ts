@@ -6,6 +6,7 @@ export function useKeyboard() {
   const moveRight = useTetrisStore((state) => state.moveRight);
   const rotate = useTetrisStore((state) => state.rotate);
   const softDrop = useTetrisStore((state) => state.softDrop);
+  const hardDrop = useTetrisStore((state) => state.hardDrop);
   const isPlaying = useTetrisStore((state) => state.isPlaying);
   const isGameOver = useTetrisStore((state) => state.isGameOver);
 
@@ -13,6 +14,7 @@ export function useKeyboard() {
     moveLeft,
     moveRight,
     softDrop,
+    hardDrop,
     rotate,
     isPlaying,
     isGameOver,
@@ -22,12 +24,13 @@ export function useKeyboard() {
     actionsRef.current = {
       moveLeft,
       moveRight,
+      hardDrop,
       softDrop,
       rotate,
       isPlaying,
       isGameOver,
     };
-  }, [moveLeft, moveRight, softDrop, rotate, isPlaying, isGameOver]);
+  }, [moveLeft, moveRight, softDrop, rotate, hardDrop, isPlaying, isGameOver]);
 
   useEffect(() => {
     const pressedKeys = new Set<string>();
@@ -40,7 +43,7 @@ export function useKeyboard() {
       const { isPlaying, isGameOver, rotate } = actionsRef.current;
       if (!isPlaying || isGameOver) return;
 
-      const gameKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+      const gameKeys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "];
       if (gameKeys.includes(event.key)) {
         event.preventDefault();
       }
@@ -48,6 +51,9 @@ export function useKeyboard() {
       // Unique case : rotation (ArrowUp) – We want to rotate only once per press
       if (event.key === "ArrowUp" && !pressedKeys.has("ArrowUp")) {
         rotate();
+      }
+      if (event.key === " " && !pressedKeys.has(" ")) {
+        hardDrop();
       }
 
       pressedKeys.add(event.key);
