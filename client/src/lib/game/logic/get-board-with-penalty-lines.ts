@@ -4,6 +4,7 @@ export function getBoardWithPenaltyLines(
   board: TetrominoType[][],
   numberOfPenaltyLines: number,
 ) {
+  // Add penalty lines at bottom of board
   const penaltyLines = Array.from({ length: numberOfPenaltyLines }, () =>
     new Array<TetrominoType>(GRID_WIDTH).fill(Tetromino.PENALTY),
   );
