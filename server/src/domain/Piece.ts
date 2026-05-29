@@ -1,5 +1,5 @@
-import {Tetromino, TetrominoType} from '@red-tetris/shared/tetrominos'
-import {Player} from "./Player";
+import { Tetromino, TetrominoType } from '@red-tetris/shared/tetrominos'
+import { Player } from './Player'
 
 export class Piece {
     private listPlayerNumber: Map<string, number> = new Map()
@@ -37,8 +37,10 @@ export class Piece {
     }
 
     private getSequenceTetrominos(): TetrominoType[] {
-        const tetrominosSequence = Object.values(Tetromino)
-            .filter((v): v is TetrominoType => v !== Tetromino.NONE)
+        const tetrominosSequence = Object.values(Tetromino).filter(
+            (v): v is TetrominoType =>
+                v !== Tetromino.NONE && v !== Tetromino.PENALTY
+        )
         for (let i = 0; i < 7; i++) {
             const randomIndex = Math.floor(Math.random() * (i + 1))
             ;[tetrominosSequence[i], tetrominosSequence[randomIndex]] = [

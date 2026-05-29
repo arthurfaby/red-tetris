@@ -13,7 +13,7 @@ export function getBoardWithCurrentPiece(
   const shape = TETROMINOS[currentPiece.type].shape[currentPiece.rotation];
   shape.forEach((row, dy) => {
     row.forEach((value, dx) => {
-      if (value !== Tetromino.NONE) {
+      if (value !== Tetromino.NONE && value !== Tetromino.PENALTY) {
         const boardY = currentPiece.y + dy;
         const boardX = currentPiece.x + dx;
         if (isInBoard(boardX, boardY)) {
