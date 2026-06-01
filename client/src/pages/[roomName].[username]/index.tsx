@@ -44,6 +44,8 @@ export default function Room() {
     emit("join_game", { gameId: roomName, username: username });
 
     return () => {
+      off("start_piece");
+      off("set_leader");
       off("player_list");
       emit("leave_game", roomName);
     };
