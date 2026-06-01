@@ -13,6 +13,7 @@ import { getBoardWithCurrentPiece } from "@/lib/game/logic/get-board-with-curren
 import { getNumberOfLinesToDelete } from "@/lib/game/logic/get-number-of-lines-to-delete.ts";
 import { clearLines } from "@/lib/game/logic/clear-lines.ts";
 import { socket } from "@/socket.ts";
+import { getBoardWithPenaltyLines } from "@/lib/game/logic/get-board-with-penalty-lines.ts";
 
 export type BoardState = TetrominoType[][];
 
@@ -97,6 +98,16 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         get().tick();
       }, 1000),
     });
+
+    socket.on("next_piece", (next_piece) => {
+      set({ nextPiece: next_piece });
+    });
+
+    socket.on("penalty_lines", (numberOfPenaltyLines) => {
+      set({
+        board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
+      });
+    });
   },
 
   moveLeft: () => {
@@ -147,12 +158,14 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     get().resetInterval();
   },
 
-  hardDrop: async ()  => {
+  hardDrop: async () => {
     let currentPiece = get().currentPiece;
-    while (isValidPosition(get().board, { ...currentPiece, y: currentPiece.y + 1})) {
+    while (
+      isValidPosition(get().board, { ...currentPiece, y: currentPiece.y + 1 })
+    ) {
       currentPiece = { ...currentPiece, y: currentPiece.y + 1 };
       set({ currentPiece });
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
     get().lockPiece();
   },
@@ -165,6 +178,9 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     // 2. Check and delete lines
     const numberOfLinesDeleted = getNumberOfLinesToDelete(get().board);
     set({ board: clearLines(get().board) });
+    if (numberOfLinesDeleted > 1) {
+      socket.emit("finish_lines", numberOfLinesDeleted);
+    }
 
     // 3. Update score
     set({
@@ -199,8 +215,5 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     if (roomId) {
       socket.emit("next_piece", roomId);
     }
-    socket.on("next_piece", (next_piece) => {
-      set({ nextPiece: next_piece });
-    });
   },
 }));

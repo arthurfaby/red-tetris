@@ -6,7 +6,8 @@ export const Tetromino = {
     O: 4,
     S: 5,
     T: 6,
-    Z: 7
+    Z: 7,
+    PENALTY: 8.
 } as const;
 
 export type TetrominoType = typeof Tetromino[keyof typeof Tetromino];
@@ -17,7 +18,9 @@ export const TETROMINOS: Record<TetrominoType, {
     [Tetromino.NONE]: {
         shape: [[[Tetromino.NONE]]],
     },
-
+    [Tetromino.PENALTY]: {
+        shape: [[[Tetromino.PENALTY]]],
+    },
     [Tetromino.I]: {
         shape: [
             [
