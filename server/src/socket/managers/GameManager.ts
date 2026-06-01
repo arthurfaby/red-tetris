@@ -1,6 +1,7 @@
 import { Game } from '../../domain/Game'
 import { Player } from '../../domain/Player'
 import { PlayerListData } from '@red-tetris/shared'
+import {Piece} from "../../domain/Piece";
 
 export class GameManager {
     #games: Map<string, Game>
@@ -27,6 +28,12 @@ export class GameManager {
         if (game.playerList.length === 0) {
             this.#games.delete(gameId)
         }
+    }
+
+    getPiece(gameId: string): Piece | null {
+        const game = this.#games.get(gameId)
+        if (!game) return null
+        return game.piece
     }
 
     getLeader(gameId: string) {
