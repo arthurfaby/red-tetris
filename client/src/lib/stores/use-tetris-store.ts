@@ -12,7 +12,7 @@ import { isValidPosition } from "@/lib/game/logic/is-valid-position.ts";
 import { getBoardWithCurrentPiece } from "@/lib/game/logic/get-board-with-current-piece.ts";
 import { getNumberOfLinesToDelete } from "@/lib/game/logic/get-number-of-lines-to-delete.ts";
 import { clearLines } from "@/lib/game/logic/clear-lines.ts";
-import { socket } from "@/socket.ts";
+import { useSocket } from "@/lib/stores/use-socket.ts";
 import { getBoardWithPenaltyLines } from "@/lib/game/logic/get-board-with-penalty-lines.ts";
 
 export type BoardState = TetrominoType[][];
@@ -99,11 +99,11 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       }, 1000),
     });
 
-    socket.on("next_piece", (next_piece) => {
+    useSocket.getState().listen("next_piece", (next_piece) => {
       set({ nextPiece: next_piece });
     });
 
-    socket.on("penalty_lines", (numberOfPenaltyLines) => {
+    useSocket.getState().listen("penalty_lines", (numberOfPenaltyLines) => {
       set({
         board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
       });
@@ -179,7 +179,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     const numberOfLinesDeleted = getNumberOfLinesToDelete(get().board);
     set({ board: clearLines(get().board) });
     if (numberOfLinesDeleted > 1) {
-      socket.emit("finish_lines", numberOfLinesDeleted);
+      useSocket.getState().emit("finish_lines", numberOfLinesDeleted);
     }
 
     // 3. Update score
@@ -213,7 +213,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     // 6. Update nextPiece from backend
     const roomId = get().room;
     if (roomId) {
-      socket.emit("next_piece", roomId);
+      useSocket.getState().emit("next_piece", roomId);
     }
   },
 }));

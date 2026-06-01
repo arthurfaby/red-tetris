@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { useParams } from "@/router.ts";
 import { TetrisGame } from "@/components/game/layout/tetris-game.tsx";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
-import { socket } from "@/socket.ts";
+import { useSocket } from "@/lib/stores/use-socket.ts";
 import type { PlayerListData } from "@red-tetris/shared";
 import { Crown } from "lucide-react";
 
@@ -21,31 +21,35 @@ export default function Room() {
   const startGameStore = useTetrisStore((state) => state.startGame);
   const isGameOver = useTetrisStore((state) => state.isGameOver);
   const setRoom = useTetrisStore((state) => state.setRoom);
+  const socketId = useSocket((state) => state.id);
+  const { emit, listen, off } = useSocket.getState();
 
   const handleStartGame = () => {
-    socket.emit("start_game", roomName);
+    emit("start_game", roomName);
   };
 
   useEffect(() => {
     if (roomName) {
       setRoom(roomName);
     }
-    socket.on("start_piece", (startPiece, nextPiece) => {
+    listen("start_piece", (startPiece, nextPiece) => {
       startGameStore(startPiece, nextPiece);
     });
-    socket.on("set_leader", (leaderId) => {
+    listen("set_leader", (leaderId) => {
       setLeaderId(leaderId);
     });
-    socket.on("player_list", (player_list) => {
+    listen("player_list", (player_list) => {
       setPlayers(player_list);
     });
-    socket.emit("join_game", { gameId: roomName, username: username });
+    emit("join_game", { gameId: roomName, username: username });
 
     return () => {
-      socket.off("player_list");
-      socket.emit("leave_game", roomName);
+      off("start_piece");
+      off("set_leader");
+      off("player_list");
+      emit("leave_game", roomName);
     };
-  }, [roomName, setRoom, username, startGameStore]);
+  }, [roomName, setRoom, username, startGameStore, listen, emit, off]);
 
   if (isPlaying) {
     return (
@@ -82,7 +86,7 @@ export default function Room() {
                   </div>
                 );
               })}
-              {leaderId === socket.id ? (
+              {leaderId === socketId ? (
                 <Button
                   className="col-span-3"
                   onClick={() => handleStartGame()}
