@@ -1,5 +1,5 @@
 import { Player } from './Player'
-import {Piece} from "./Piece";
+import { Piece } from './Piece'
 
 export class Game {
     #playerList: Player[]

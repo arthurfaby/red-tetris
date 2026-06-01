@@ -10,7 +10,7 @@ export function isValidPosition(
     TETROMINOS[futurePieceState.type].shape[futurePieceState.rotation];
   for (const [dy, row] of shape.entries()) {
     for (const [dx, value] of row.entries()) {
-      if (value !== Tetromino.NONE) {
+      if (value !== Tetromino.NONE && value !== Tetromino.PENALTY) {
         const boardY = futurePieceState.y + dy;
         const boardX = futurePieceState.x + dx;
         if (

@@ -2,6 +2,8 @@ import { Tetromino, type TetrominoType } from "@red-tetris/shared";
 
 export const TETROMINO_CLASSES: Record<TetrominoType, string> = {
   [Tetromino.NONE]: "bg-transparent",
+  [Tetromino.PENALTY]:
+    "bg-gray-400 border-4 border-t-gray-300 border-l-gray-300 border-b-gray-700 border-r-gray-700",
   [Tetromino.I]:
     "bg-cyan-400 border-4 border-t-cyan-300 border-l-cyan-300 border-b-cyan-700 border-r-cyan-700",
   [Tetromino.J]:
