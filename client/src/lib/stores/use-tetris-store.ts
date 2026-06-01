@@ -3,6 +3,7 @@ import {
   DEFAULT_TETROMINO_POSITION,
   GRID_HEIGHT,
   GRID_WIDTH,
+  type PlayerListData,
   POINTS_PER_LINE,
   Tetromino,
   type TetrominoType,
@@ -12,6 +13,8 @@ import { isValidPosition } from "@/lib/game/logic/is-valid-position.ts";
 import { getBoardWithCurrentPiece } from "@/lib/game/logic/get-board-with-current-piece.ts";
 import { getNumberOfLinesToDelete } from "@/lib/game/logic/get-number-of-lines-to-delete.ts";
 import { clearLines } from "@/lib/game/logic/clear-lines.ts";
+
+import { getSpectrum } from "@/lib/game/logic/get-spectrum.ts";
 import { useSocket } from "@/lib/stores/use-socket.ts";
 import { getBoardWithPenaltyLines } from "@/lib/game/logic/get-board-with-penalty-lines.ts";
 
@@ -24,6 +27,11 @@ export interface TetrominoState {
   rotation: number; // Rotation index (0, 1, 2, 3)
 }
 
+export interface Opponent {
+  username: string;
+  spectrum: number[];
+}
+
 export interface TetrisStore {
   board: BoardState;
   currentPiece: TetrominoState;
@@ -33,12 +41,17 @@ export interface TetrisStore {
   isPlaying: boolean;
   isGameOver: boolean;
   room: string | null;
+  opponents: Opponent[];
 
   intervalId: number;
 
   resetInterval: () => void;
 
-  startGame: (startPiece: TetrominoType, nextPiece: TetrominoType) => void;
+  startGame: (
+    startPiece: TetrominoType,
+    nextPiece: TetrominoType,
+    playerList: PlayerListData[],
+  ) => void;
   moveLeft: () => void;
   moveRight: () => void;
   rotate: () => void;
@@ -47,6 +60,8 @@ export interface TetrisStore {
   tick: () => void;
   lockPiece: () => void;
   setRoom: (room: string) => void;
+  setOpponent: (opponent: string) => void;
+  setSpectrum: () => void;
 }
 
 export const useTetrisStore = create<TetrisStore>((set, get) => ({
@@ -66,6 +81,17 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   isGameOver: false,
   intervalId: 0,
   room: null,
+  opponents: [],
+
+  setOpponent: (opponentUsername: string) => {
+    const newOpponent: Opponent = {
+      username: opponentUsername,
+      spectrum: new Array(GRID_WIDTH).fill(0),
+    };
+    set({ opponents: [...get().opponents, newOpponent] });
+  },
+
+  setSpectrum: () => {},
 
   setRoom: (roomName: string) => set({ room: roomName }),
 
@@ -81,8 +107,31 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       }, 1000),
     });
   },
-  startGame: (startPiece: TetrominoType, nextPiece: TetrominoType) => {
+  startGame: (
+    startPiece: TetrominoType,
+    nextPiece: TetrominoType,
+    playerList,
+  ) => {
     if (get().isPlaying && !get().isGameOver) return;
+    const opponents: Opponent[] = playerList
+      .filter((player) => player.id !== useSocket.getState().id)
+      .map((player) => ({
+        username: player.username,
+        spectrum: new Array(GRID_WIDTH).fill(0),
+      }));
+    set({ opponents });
+    useSocket.getState().off("player_spectrum");
+    useSocket
+      .getState()
+      .listen("player_spectrum", (username: string, spectrum: number[]) => {
+        set({
+          opponents: get().opponents.map((opponent) =>
+            opponent.username === username
+              ? { ...opponent, spectrum }
+              : opponent,
+          ),
+        });
+      });
     set({ isPlaying: true, isGameOver: false, score: 0, linesCleared: 0 });
     set({ board: createEmptyBoard(GRID_HEIGHT, GRID_WIDTH) });
     set({
@@ -181,6 +230,8 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     if (numberOfLinesDeleted > 1) {
       useSocket.getState().emit("finish_lines", numberOfLinesDeleted);
     }
+
+    useSocket.getState().emit("new_spectrum", getSpectrum(get().board));
 
     // 3. Update score
     set({

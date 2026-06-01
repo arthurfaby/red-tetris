@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Avatar,
   AvatarBadge,
@@ -16,6 +16,7 @@ import { Crown } from "lucide-react";
 export default function Room() {
   const { roomName, username } = useParams("/:roomName/:username");
   const [players, setPlayers] = useState<PlayerListData[]>([]);
+  const playersRef = useRef<PlayerListData[]>([]);
   const [leaderId, setLeaderId] = useState("");
   const isPlaying = useTetrisStore((state) => state.isPlaying);
   const startGameStore = useTetrisStore((state) => state.startGame);
@@ -33,13 +34,14 @@ export default function Room() {
       setRoom(roomName);
     }
     listen("start_piece", (startPiece, nextPiece) => {
-      startGameStore(startPiece, nextPiece);
+      startGameStore(startPiece, nextPiece, playersRef.current);
     });
     listen("set_leader", (leaderId) => {
       setLeaderId(leaderId);
     });
     listen("player_list", (player_list) => {
       setPlayers(player_list);
+      playersRef.current = player_list;
     });
     emit("join_game", { gameId: roomName, username: username });
 

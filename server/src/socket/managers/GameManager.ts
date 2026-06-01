@@ -56,4 +56,11 @@ export class GameManager {
             id: player.id,
         }))
     }
+
+    getRoom(playerId: string) {
+        for (const [room, game] of this.#games) {
+            if (game.playerList.some(player => player.id === playerId)) return room
+        }
+        return null
+    }
 }
