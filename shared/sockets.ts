@@ -11,7 +11,7 @@ export interface ServerToClientEvents {
     next_piece: (tetromino: TetrominoType) => void
     start_piece: (start_piece: TetrominoType, next_piece: TetrominoType) => void
     set_leader: (playerId: string) => void
-    player_spectrum: (playerName: string, spectrum: number[]) => void
+    player_spectrum: (id: string, spectrum: number[]) => void
     penalty_lines: (numberOfPenaltyLines: number) => void
 }
 
