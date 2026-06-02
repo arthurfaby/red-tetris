@@ -1,4 +1,3 @@
-
 export const JOIN_GAME_STATUS = {
     CREATED: 0,
     JOINED: 1,
