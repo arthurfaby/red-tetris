@@ -55,7 +55,7 @@ export function handlerGame(
         try {
             const player = playerManager.getPlayerOrFail(socket.id)
             player.spectrum = spectrum
-            io.in(socket.data.gameId).emit('player_spectrum', player.username, player.spectrum)
+            io.in(socket.data.gameId).emit('player_spectrum', socket.id, player.spectrum)
         }
         catch (e) {
             console.error(e)

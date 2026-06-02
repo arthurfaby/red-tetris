@@ -39,9 +39,9 @@ export default function Room() {
     listen("set_leader", (leaderId) => {
       setLeaderId(leaderId);
     });
-    listen("player_list", (player_list) => {
-      setPlayers(player_list);
-      playersRef.current = player_list;
+    listen("player_list", (playerList) => {
+      setPlayers(playerList);
+      playersRef.current = playerList;
     });
     emit("join_game", { gameId: roomName, username: username });
 

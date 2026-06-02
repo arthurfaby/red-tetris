@@ -28,6 +28,7 @@ export interface TetrominoState {
 }
 
 export interface Opponent {
+  id: string;
   username: string;
   spectrum: number[];
 }
@@ -60,7 +61,7 @@ export interface TetrisStore {
   tick: () => void;
   lockPiece: () => void;
   setRoom: (room: string) => void;
-  setOpponent: (opponent: string) => void;
+  setOpponent: (id: string, opponentUsername: string) => void;
   setSpectrum: () => void;
 }
 
@@ -83,8 +84,9 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   room: null,
   opponents: [],
 
-  setOpponent: (opponentUsername: string) => {
+  setOpponent: (id: string, opponentUsername: string) => {
     const newOpponent: Opponent = {
+      id: id,
       username: opponentUsername,
       spectrum: new Array(GRID_WIDTH).fill(0),
     };
@@ -116,6 +118,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     const opponents: Opponent[] = playerList
       .filter((player) => player.id !== useSocket.getState().id)
       .map((player) => ({
+        id: player.id,
         username: player.username,
         spectrum: new Array(GRID_WIDTH).fill(0),
       }));
@@ -123,10 +126,10 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     useSocket.getState().off("player_spectrum");
     useSocket
       .getState()
-      .listen("player_spectrum", (username: string, spectrum: number[]) => {
+      .listen("player_spectrum", (id: string, spectrum: number[]) => {
         set({
           opponents: get().opponents.map((opponent) =>
-            opponent.username === username
+            opponent.id === id
               ? { ...opponent, spectrum }
               : opponent,
           ),
