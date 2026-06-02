@@ -10,13 +10,20 @@ export class GameManager {
         this.#games = new Map()
     }
 
-    joinGame(gameId: string, player: Player) {
+    getGame(gameId: string): Game | undefined {
+        return this.#games.get(gameId)
+    }
+
+    // Return true if game is created, false otherwise
+    joinGame(gameId: string, player: Player): boolean {
         const game = this.#games.get(gameId)
         if (!game) {
             const newGame = new Game(player)
             this.#games.set(gameId, newGame)
+            return true
         } else {
             game.addPlayer(player)
+            return false
         }
     }
 

@@ -13,7 +13,7 @@ const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
 );
 
 export interface SocketStore {
-  id: string | undefined;
+  socketId: string | undefined;
   connect: () => void;
   emit: <K extends keyof ClientToServerEvents>(
     event: K,
@@ -30,11 +30,16 @@ export interface SocketStore {
 }
 
 export const useSocket = create<SocketStore>((set) => {
-  socket.on("connect", () => set({ id: socket.id }));
-  socket.on("disconnect", () => set({ id: undefined }));
+  socket.on("connect", () => {
+    set({ socketId: socket.id });
+  });
+
+  socket.on("disconnect", () => {
+    set({ socketId: undefined });
+  });
 
   return {
-    id: socket.id,
+    socketId: socket.id,
     connect: () => socket.connect(),
     emit: (event, ...args) => {
       socket.emit(event, ...(args as never));

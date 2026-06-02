@@ -1,4 +1,8 @@
-import { SocketPlayer, SocketServer } from '@red-tetris/shared'
+import {
+    JOIN_GAME_STATUS,
+    SocketPlayer,
+    SocketServer,
+} from '@red-tetris/shared'
 import { GameManager } from '../managers/GameManager'
 import { PlayerManager } from '../managers/PlayerManager'
 import { handleNewLeader } from '../handle-new-leader'
@@ -21,9 +25,19 @@ export function handlerSocketConnection(
             })
 
             socket.data.gameId = payload.gameId
+
+            if (gameManager.getGame(payload.gameId)?.isLaunched) {
+                socket.emit('join_game', JOIN_GAME_STATUS.ALREADY_LAUNCHED)
+            }
+
             socket.join(payload.gameId)
 
-            gameManager.joinGame(payload.gameId, player)
+            const gameCreated = gameManager.joinGame(payload.gameId, player)
+            socket.emit(
+                'join_game',
+                gameCreated ? JOIN_GAME_STATUS.CREATED : JOIN_GAME_STATUS.JOINED
+            )
+
             const leader = gameManager.getLeader(payload.gameId)
 
             socket.emit('set_leader', leader!.id)

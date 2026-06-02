@@ -4,10 +4,16 @@ import { Piece } from './Piece'
 export class Game {
     #playerList: Player[]
     #piece: Piece
+    #launched: boolean
 
     constructor(leader: Player) {
         this.#playerList = [leader]
         this.#piece = new Piece(this.#playerList)
+        this.#launched = false
+    }
+
+    get isLaunched(): boolean {
+        return this.#launched
     }
 
     get playerList() {
@@ -16,6 +22,10 @@ export class Game {
 
     get piece() {
         return this.#piece
+    }
+
+    launch() {
+        this.#launched = true
     }
 
     addPlayer(player: Player) {

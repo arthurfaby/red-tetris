@@ -1,5 +1,6 @@
 import type {TetrominoType} from "./tetrominos";
 import {Server, Socket} from "socket.io";
+import {JoinGameStatus} from "./status";
 
 export type PlayerListData = {
     username: string,
@@ -9,6 +10,7 @@ export type PlayerListData = {
 export interface ServerToClientEvents {
     player_list: (players: PlayerListData[]) => void
     next_piece: (tetromino: TetrominoType) => void
+    join_game: (joinStatus: JoinGameStatus) => void
     start_piece: (start_piece: TetrominoType, next_piece: TetrominoType) => void
     set_leader: (playerId: string) => void
     player_spectrum: (id: string, spectrum: number[]) => void
