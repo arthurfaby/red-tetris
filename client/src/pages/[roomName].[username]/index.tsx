@@ -1,57 +1,25 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
-import { useEffect, useRef, useState } from "react";
 import {
   Avatar,
   AvatarBadge,
   AvatarFallback,
 } from "@/components/ui/avatar.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { useParams } from "@/router.ts";
 import { TetrisGame } from "@/components/game/layout/tetris-game.tsx";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 import { useSocket } from "@/lib/stores/use-socket.ts";
-import type { PlayerListData } from "@red-tetris/shared";
 import { Crown } from "lucide-react";
+import { useSocketLobby } from "@/lib/game/hooks/use-socket-lobby.ts";
 
 export default function Room() {
-  const { roomName, username } = useParams("/:roomName/:username");
-  const [players, setPlayers] = useState<PlayerListData[]>([]);
-  const playersRef = useRef<PlayerListData[]>([]);
-  const [leaderId, setLeaderId] = useState("");
+  const { players, leaderId, roomName, emit } = useSocketLobby();
   const isPlaying = useTetrisStore((state) => state.isPlaying);
-  const startGameStore = useTetrisStore((state) => state.startGame);
   const isGameOver = useTetrisStore((state) => state.isGameOver);
-  const setRoom = useTetrisStore((state) => state.setRoom);
   const socketId = useSocket((state) => state.id);
-  const { emit, listen, off } = useSocket.getState();
 
   const handleStartGame = () => {
     emit("start_game", roomName);
   };
-
-  useEffect(() => {
-    if (roomName) {
-      setRoom(roomName);
-    }
-    listen("start_piece", (startPiece, nextPiece) => {
-      startGameStore(startPiece, nextPiece, playersRef.current);
-    });
-    listen("set_leader", (leaderId) => {
-      setLeaderId(leaderId);
-    });
-    listen("player_list", (playerList) => {
-      setPlayers(playerList);
-      playersRef.current = playerList;
-    });
-    emit("join_game", { gameId: roomName, username: username });
-
-    return () => {
-      off("start_piece");
-      off("set_leader");
-      off("player_list");
-      emit("leave_game", roomName);
-    };
-  }, [roomName, setRoom, username, startGameStore, listen, emit, off]);
 
   if (isPlaying) {
     return (
