@@ -17,7 +17,6 @@ export function handlerSocketConnection(
 ) {
     socket.on('join_game', (payload) => {
         try {
-            console.log(payload, 'joined game')
             if (!payload.username || !payload.gameId) return
 
             const player = playerManager.getPlayerOrFail(socket.id)
