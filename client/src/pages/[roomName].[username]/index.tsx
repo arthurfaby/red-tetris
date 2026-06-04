@@ -56,7 +56,6 @@ export default function Room() {
     });
 
     listen("join_game", (status) => {
-      console.log("Receive", status);
       switch (status) {
         case JOIN_GAME_STATUS.JOINED:
           toast.success("Game joined successfully");

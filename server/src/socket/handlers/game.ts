@@ -51,13 +51,9 @@ export function handlerGame(
         try {
             const sockets = await io.in(socket.data.gameId).fetchSockets()
             sockets.forEach((otherSocket) => {
-                console.log(
-                    `Trying to send ${penaltyLines} to ${otherSocket.id}`
-                )
                 if (socket.id === otherSocket.id) return
 
                 otherSocket.emit('penalty_lines', penaltyLines)
-                console.log(`Sent`)
             })
         } catch (e: unknown) {
             handlePrintError(e)

@@ -11,9 +11,9 @@ import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 export function TetrisSpectrumsLayout() {
   const opponents = useTetrisStore((state) => state.opponents);
   return (
-    <div className="w-full h-full lg:w-72 max-h-full ">
+    <div className="hidden lg:block w-72 h-[640px] max-h-full">
       <Card className="flex flex-col h-full">
-        <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0 shrink-0">
+        <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0 sticky">
           <CardTitle className="text-muted-foreground text-xs font-bold uppercase tracking-widest">
             Adversaires
           </CardTitle>
