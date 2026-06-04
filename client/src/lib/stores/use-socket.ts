@@ -42,12 +42,15 @@ export const useSocket = create<SocketStore>((set) => {
     socketId: socket.id,
     connect: () => socket.connect(),
     emit: (event, ...args) => {
+      console.info("[EMIT]", event, ...args);
       socket.emit(event, ...(args as never));
     },
     listen: (event, handler) => {
+      console.log("[LISTEN]", event);
       socket.on(event, handler as never);
     },
     off: (event, handler) => {
+      console.log("[OFF]", event);
       socket.off(event, handler as never);
     },
   };

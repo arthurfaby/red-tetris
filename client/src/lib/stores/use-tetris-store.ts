@@ -141,6 +141,14 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         spectrum: new Array(GRID_WIDTH).fill(0),
       }));
     set({ opponents });
+
+    const socket = useSocket.getState();
+
+    // Clean up previous game listeners before re-registering
+    socket.off("next_piece");
+    socket.off("penalty_lines");
+    socket.off("game_over");
+
     set({
       isPlaying: true,
       isGameOver: false,
@@ -164,17 +172,17 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       }, 1000),
     });
 
-    useSocket.getState().listen("next_piece", (next_piece) => {
+    socket.listen("next_piece", (next_piece) => {
       set({ nextPiece: next_piece });
     });
 
-    useSocket.getState().listen("penalty_lines", (numberOfPenaltyLines) => {
+    socket.listen("penalty_lines", (numberOfPenaltyLines) => {
       set({
         board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
       });
     });
 
-    useSocket.getState().listen("game_over", (payload) => {
+    socket.listen("game_over", (payload) => {
       set({
         isPlayerDead: true,
         isPlaying: false,

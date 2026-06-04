@@ -18,6 +18,10 @@ export function handlerGame(
         const game = gameManager.getGame(gameId)
         if (!game) return
 
+        if (gameManager.getLeader(gameId)?.id !== socket.id) {
+            return
+        }
+
         game.setStatus('LAUNCHED')
 
         const players = gameManager.getPlayerList(gameId)
