@@ -42,6 +42,7 @@ export interface TetrisStore {
   isPlaying: boolean;
   isPlayerDead: boolean;
   isGameOver: boolean;
+  isSoloGame: boolean;
   winner: { id: string; username: string } | null;
   room: string | null;
   opponents: Opponent[];
@@ -82,6 +83,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   nextPiece: Tetromino.Z,
   score: 0,
   linesCleared: 0,
+  isSoloGame: false,
   isPlaying: false,
   isPlayerDead: false,
   isGameOver: false,
@@ -153,6 +155,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       isPlaying: true,
       isGameOver: false,
       isPlayerDead: false,
+      // TODO isSoloGame: opponents.length === 0
       winner: null,
       score: 0,
       linesCleared: 0,

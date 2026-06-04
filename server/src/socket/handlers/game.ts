@@ -51,7 +51,8 @@ export function handlerGame(
         try {
             const sockets = await io.in(socket.data.gameId).fetchSockets()
             sockets.forEach((otherSocket) => {
-                if (socket.id === otherSocket.id) return
+                const player = playerManager.getPlayerOrFail(otherSocket.id)
+                if (socket.id === otherSocket.id || player.isDead) return
 
                 otherSocket.emit('penalty_lines', penaltyLines)
             })
@@ -67,16 +68,19 @@ export function handlerGame(
 
             player.setDeath(true)
 
-            const winner = game.winnerOrNull
+            const potentialWinner = game.winnerOrNull
 
-            if (winner) {
+            if (potentialWinner || game.isSoloGame) {
+                const winner = game.isSoloGame ? player : potentialWinner!
                 io.in(socket.data.gameId).emit('game_over', {
                     id: winner.id,
                     username: winner.username,
                 })
+                game.setStatus('IN_LOBBY')
                 game.playerList.forEach((p) => {
                     p.resetState()
                 })
+                game.piece.resetState(game.playerList)
             }
         } catch (e: unknown) {
             handlePrintError(e)

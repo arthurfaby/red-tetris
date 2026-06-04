@@ -13,6 +13,10 @@ export class Game {
         this.#status = 'IN_LOBBY'
     }
 
+    get isSoloGame(): boolean {
+        return this.#playerList.length === 1
+    }
+
     get status(): GameStatus {
         return this.#status
     }

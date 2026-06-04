@@ -106,21 +106,25 @@ export default function Room() {
       <Card className={"w-full max-w-md p-8"}>
         <CardHeader className="text-2xl ">Red Tetris - {roomName}</CardHeader>
         <CardContent className="">
-          {!isGameOver && players.length > 0 && (
-            <div className="grid grid-cols-3 gap-4 justify-center">
-              <PlayerList players={players} leaderId={leaderId} />
-              <LaunchGameButton
-                leaderId={leaderId}
-                socketId={socketId}
-                roomName={roomName}
-              />
-            </div>
-          )}
-          {isGameOver && winner && (
-            <p className="text-green-400">
-              {winner.id === socketId ? "You have " : winner.username + " has"}{" "}
-              won !
-            </p>
+          {players.length > 0 && !isPlaying && (
+            <>
+              {winner && (
+                <p className="text-green-400 mb-4">
+                  {winner.id === socketId
+                    ? "You have "
+                    : winner.username + " has"}{" "}
+                  won !
+                </p>
+              )}
+              <div className="grid grid-cols-3 gap-4 justify-center">
+                <PlayerList players={players} leaderId={leaderId} />
+                <LaunchGameButton
+                  leaderId={leaderId}
+                  socketId={socketId}
+                  roomName={roomName}
+                />
+              </div>
+            </>
           )}
           {errorMessage && <p className="text-red-400">{errorMessage}</p>}
         </CardContent>
