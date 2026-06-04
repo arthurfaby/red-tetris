@@ -23,7 +23,7 @@ export function TetrisSpectrumsLayout() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-3 ">
             {opponents.map((opponent) => (
               <div
-                key={opponent.username}
+                key={opponent.id}
                 className="group relative rounded-md border bg-muted/30 p-2 transition-colors hover:bg-muted/50"
               >
                 <div className="mb-2 flex items-center justify-between">

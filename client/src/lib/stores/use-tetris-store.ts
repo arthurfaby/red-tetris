@@ -61,8 +61,10 @@ export interface TetrisStore {
   tick: () => void;
   lockPiece: () => void;
   setRoom: (room: string) => void;
-  setOpponent: (id: string, opponentUsername: string) => void;
-  setSpectrum: () => void;
+  setOpponent: (id: string, spectrum: number[]) => void;
+  setNextPiece: (nextPiece: TetrominoType) => void;
+  setBoard: (board: TetrominoType[][]) => void;
+  addPenaltyLines: (numberOfPenaltyLines: number) => void;
 }
 
 export const useTetrisStore = create<TetrisStore>((set, get) => ({
@@ -84,18 +86,29 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   room: null,
   opponents: [],
 
-  setOpponent: (id: string, opponentUsername: string) => {
-    const newOpponent: Opponent = {
-      id: id,
-      username: opponentUsername,
-      spectrum: new Array(GRID_WIDTH).fill(0),
-    };
-    set({ opponents: [...get().opponents, newOpponent] });
+  setOpponent: (id: string, spectrum: number[]) => {
+    set({
+      opponents: get().opponents.map((opponent) =>
+        opponent.id === id ? { ...opponent, spectrum } : opponent,
+      ),
+    });
   },
 
-  setSpectrum: () => {},
+  setNextPiece: (nextPiece: TetrominoType) => {
+    set({nextPiece: nextPiece});
+  },
+
+  setBoard: (board: TetrominoType[][])=> {
+    set({board: board});
+  },
 
   setRoom: (roomName: string) => set({ room: roomName }),
+
+  addPenaltyLines: (numberOfPenaltyLines: number) => {
+    set({
+      board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
+    });
+  },
 
   // --- ACTIONS ---
   resetInterval: () => {
@@ -123,18 +136,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         spectrum: new Array(GRID_WIDTH).fill(0),
       }));
     set({ opponents });
-    useSocket.getState().off("player_spectrum");
-    useSocket
-      .getState()
-      .listen("player_spectrum", (id: string, spectrum: number[]) => {
-        set({
-          opponents: get().opponents.map((opponent) =>
-            opponent.id === id
-              ? { ...opponent, spectrum }
-              : opponent,
-          ),
-        });
-      });
     set({ isPlaying: true, isGameOver: false, score: 0, linesCleared: 0 });
     set({ board: createEmptyBoard(GRID_HEIGHT, GRID_WIDTH) });
     set({
@@ -151,15 +152,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       }, 1000),
     });
 
-    useSocket.getState().listen("next_piece", (next_piece) => {
-      set({ nextPiece: next_piece });
-    });
-
-    useSocket.getState().listen("penalty_lines", (numberOfPenaltyLines) => {
-      set({
-        board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
-      });
-    });
   },
 
   moveLeft: () => {
