@@ -40,7 +40,9 @@ export interface TetrisStore {
   score: number;
   linesCleared: number;
   isPlaying: boolean;
+  isPlayerDead: boolean;
   isGameOver: boolean;
+  winner: { id: string; username: string } | null;
   room: string | null;
   opponents: Opponent[];
 
@@ -81,7 +83,9 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   score: 0,
   linesCleared: 0,
   isPlaying: false,
+  isPlayerDead: false,
   isGameOver: false,
+  winner: null,
   intervalId: 0,
   room: null,
   opponents: [],
@@ -122,6 +126,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       }, 1000),
     });
   },
+
   startGame: (
     startPiece: TetrominoType,
     nextPiece: TetrominoType,
@@ -136,7 +141,14 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         spectrum: new Array(GRID_WIDTH).fill(0),
       }));
     set({ opponents });
-    set({ isPlaying: true, isGameOver: false, score: 0, linesCleared: 0 });
+    set({
+      isPlaying: true,
+      isGameOver: false,
+      isPlayerDead: false,
+      winner: null,
+      score: 0,
+      linesCleared: 0,
+    });
     set({ board: createEmptyBoard(GRID_HEIGHT, GRID_WIDTH) });
     set({
       currentPiece: {
@@ -152,6 +164,25 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       }, 1000),
     });
 
+    useSocket.getState().listen("next_piece", (next_piece) => {
+      set({ nextPiece: next_piece });
+    });
+
+    useSocket.getState().listen("penalty_lines", (numberOfPenaltyLines) => {
+      set({
+        board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
+      });
+    });
+
+    useSocket.getState().listen("game_over", (payload) => {
+      set({
+        isPlayerDead: true,
+        isPlaying: false,
+        isGameOver: true,
+        winner: payload,
+      });
+      clearInterval(get().intervalId);
+    });
   },
 
   moveLeft: () => {
@@ -242,8 +273,9 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         rotation: 0,
       })
     ) {
-      set({ isGameOver: true, isPlaying: false });
+      set({ isPlayerDead: true, isPlaying: false, isGameOver: false });
       clearInterval(get().intervalId);
+      useSocket.getState().emit("death");
       return;
     }
 

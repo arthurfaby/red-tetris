@@ -13,11 +13,22 @@ import { Crown } from "lucide-react";
 import { useSocketLobby } from "@/lib/game/hooks/use-socket-lobby.ts";
 import { toast } from "sonner";
 import {useEffect} from 'react'
+import { Spinner } from "@/components/ui/spinner.tsx";
 
 export default function Room() {
+  const { roomName, username } = useParams("/:roomName/:username");
+  const [players, setPlayers] = useState<PlayerListData[]>([]);
+  const [leaderId, setLeaderId] = useState("");
+  const startGameStore = useTetrisStore((state) => state.startGame);
   const { players, leaderId, roomName, emit } = useSocketLobby();
   const isPlaying = useTetrisStore((state) => state.isPlaying);
   const isGameOver = useTetrisStore((state) => state.isGameOver);
+  const winner = useTetrisStore((state) => state.winner);
+  const isPlayerDead = useTetrisStore((state) => state.isPlayerDead);
+  const isPlaying = useTetrisStore((state) => state.isPlaying);
+  const setRoom = useTetrisStore((state) => state.setRoom);
+  const socketId = useSocket((state) => state.socketId);
+  const { emit, listen, off } = useSocket.getState();
   const { socketId } = useSocket();
 
   const handleStartGame = () => {
@@ -27,25 +38,17 @@ export default function Room() {
   useEffect(() => {
     if (!socketId) return;
 
-    if (roomName) {
-      setRoom(roomName);
-    }
-
     listen("start_piece", (startPiece, nextPiece) => {
       startGameStore(startPiece, nextPiece);
     });
 
     listen("set_leader", (newLeaderId) => {
-      console.log({
-        newLeaderId,
-        socketId,
-        leaderId,
+      setLeaderId((prevLeaderId) => {
+        if (newLeaderId === socketId && prevLeaderId !== socketId) {
+          toast.info("You are now leader of this game");
+        }
+        return newLeaderId;
       });
-      if (newLeaderId === socketId && leaderId !== socketId) {
-        console.log("SEND TOASTE");
-        toast.info("You are now leader of this game");
-      }
-      setLeaderId(newLeaderId);
     });
 
     listen("player_list", (player_list) => {
@@ -53,7 +56,6 @@ export default function Room() {
     });
 
     listen("join_game", (status) => {
-      console.log("RECEIVE JOIN GAME STATUS");
       switch (status) {
         case JOIN_GAME_STATUS.JOINED:
           toast.success("Game joined successfully");
@@ -68,28 +70,28 @@ export default function Room() {
           toast.error("Error has occurred");
       }
     });
-
     emit("join_game", { gameId: roomName, username: username });
 
     return () => {
       off("start_piece");
       off("set_leader");
       off("player_list");
+      off("join_game");
       emit("leave_game", roomName);
     };
-  }, [
-    roomName,
-    setRoom,
-    username,
-    startGameStore,
-    listen,
-    emit,
-    off,
-    socketId,
-    leaderId,
-  ]);
+  }, [emit, listen, off, roomName, socketId, startGameStore, username]);
 
-  if (isPlaying) {
+  useEffect(() => {
+    if (!socketId) return;
+
+    if (roomName) {
+      setRoom(roomName);
+    }
+
+    return () => {};
+  }, [roomName, setRoom, socketId]);
+
+  if (isPlaying || (isPlayerDead && !isGameOver)) {
     return (
       <section className="h-screen w-screen">
         <TetrisGame />
@@ -138,9 +140,18 @@ export default function Room() {
               )}
             </div>
           ) : isGameOver ? (
-            <p className="text-red-400">GAME OVER.</p>
+            winner && (
+              <p className="text-green-400">
+                {winner.id === socketId
+                  ? "You have "
+                  : winner.username + " has"}{" "}
+                won !
+              </p>
+            )
           ) : (
-            <p className="text-red-400">ERROR. SHOULD NOT HAPPEN.</p>
+            <div className="w-full h-full flex items-center justify-center">
+              <Spinner />
+            </div>
           )}
         </CardContent>
       </Card>

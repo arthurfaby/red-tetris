@@ -16,6 +16,7 @@ export function handlerSocketConnection(
 ) {
     socket.on('join_game', (payload) => {
         try {
+            console.log(payload, 'joined game')
             if (!payload.username || !payload.gameId) return
 
             const player = playerManager.getPlayerOrFail(socket.id)
@@ -26,7 +27,7 @@ export function handlerSocketConnection(
 
             socket.data.gameId = payload.gameId
 
-            if (gameManager.getGame(payload.gameId)?.isLaunched) {
+            if (gameManager.getGame(payload.gameId)?.status === 'LAUNCHED') {
                 socket.emit('join_game', JOIN_GAME_STATUS.ALREADY_LAUNCHED)
             }
 

@@ -2,15 +2,24 @@ import {SocketPlayer, SocketServer} from '@red-tetris/shared'
 import {GameManager} from "../managers/GameManager";
 import {PlayerManager} from "../managers/PlayerManager";
 import { handlePrintError } from '../handle-print-error'
+import { PlayerManager } from '../managers/PlayerManager'
 
 export function handlerGame(
-    socket: SocketPlayer,  io: SocketServer,  gameManager: GameManager, playerManager: PlayerManager) {
+    socket: SocketPlayer,  io: SocketServer,  gameManager: GameManager,
+    playerManager: PlayerManager
+) {
     socket.on('start_game', async (gameId: string) => {
         if (!socket.rooms.has(gameId)) {
             return
         }
         const piece = gameManager.getPiece(gameId)
         if (!piece) return
+
+        const game = gameManager.getGame(gameId)
+        if (!game) return
+
+        game.setStatus('LAUNCHED')
+
         const players = gameManager.getPlayerList(gameId)
         for (const player of players) {
             const playerSocket = playerManager.getSocket(player.id)
@@ -51,6 +60,29 @@ export function handlerGame(
         }
     })
 
+    socket.on('death', () => {
+        try {
+            const player = playerManager.getPlayerOrFail(socket.id)
+            const game = gameManager.getGameOrFail(socket.data.gameId)
+
+            player.setDeath(true)
+
+            const winner = game.winnerOrNull
+
+            if (winner) {
+                io.in(socket.data.gameId).emit('game_over', {
+                    id: winner.id,
+                    username: winner.username,
+                })
+                game.playerList.forEach((p) => {
+                    p.resetState()
+                })
+            }
+        } catch (e: unknown) {
+            handlePrintError(e)
+        }
+    })
+
     socket.on('new_spectrum', (spectrum: number[]) => {
         try {
             const player = playerManager.getPlayerOrFail(socket.id)
@@ -60,8 +92,5 @@ export function handlerGame(
         catch (e) {
             console.error(e)
         }
-
-
-
     })
 }

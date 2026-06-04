@@ -15,6 +15,7 @@ export interface ServerToClientEvents {
     set_leader: (playerId: string) => void
     player_spectrum: (id: string, spectrum: number[]) => void
     penalty_lines: (numberOfPenaltyLines: number) => void
+    game_over: (payload: {id: string, username: string}) => void
 }
 
 export interface ClientToServerEvents {
@@ -24,6 +25,7 @@ export interface ClientToServerEvents {
     start_game: (gameId: string) => void
     new_spectrum: (spectrum: number[]) => void
     finish_lines: (numberOfLines: number) => void
+    death: () => void
 }
 
 export interface SocketData {

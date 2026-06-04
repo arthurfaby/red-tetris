@@ -14,6 +14,12 @@ export class GameManager {
         return this.#games.get(gameId)
     }
 
+    getGameOrFail(gameId: string): Game {
+        const game = this.#games.get(gameId)
+        if (!game) throw new Error(`Unknown player ID: ${gameId}`)
+        return game
+    }
+
     // Return true if game is created, false otherwise
     joinGame(gameId: string, player: Player): boolean {
         const game = this.#games.get(gameId)
