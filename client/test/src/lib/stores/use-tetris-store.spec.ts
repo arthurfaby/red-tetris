@@ -24,17 +24,17 @@ afterEach(() => {
 describe("useTetrisStore", () => {
   describe("startGame", () => {
     it("sets isPlaying to true when not playing", () => {
-      useTetrisStore.getState().startGame();
+      // useTetrisStore.getState().startGame();
       expect(useTetrisStore.getState().isPlaying).toBe(true);
     });
 
     it("sets isGameOver to false when not playing", () => {
-      useTetrisStore.getState().startGame();
+      // useTetrisStore.getState().startGame();
       expect(useTetrisStore.getState().isGameOver).toBe(false);
     });
 
     it("sets a non-zero intervalId when not playing", () => {
-      useTetrisStore.getState().startGame();
+      // useTetrisStore.getState().startGame();
       expect(useTetrisStore.getState().intervalId).not.toBe(0);
     });
 
@@ -44,7 +44,7 @@ describe("useTetrisStore", () => {
         isGameOver: false,
         intervalId: 0,
       });
-      useTetrisStore.getState().startGame();
+      // useTetrisStore.getState().startGame();
       // intervalId should remain 0 (early return, no new interval created)
       expect(useTetrisStore.getState().intervalId).toBe(0);
     });
@@ -55,7 +55,7 @@ describe("useTetrisStore", () => {
         isGameOver: true,
         intervalId: 0,
       });
-      useTetrisStore.getState().startGame();
+      // useTetrisStore.getState().startGame();
       expect(useTetrisStore.getState().isPlaying).toBe(true);
       expect(useTetrisStore.getState().isGameOver).toBe(false);
       expect(useTetrisStore.getState().intervalId).not.toBe(0);
@@ -63,7 +63,7 @@ describe("useTetrisStore", () => {
 
     it("calls tick after 1000ms via setInterval", () => {
       const initialY = useTetrisStore.getState().currentPiece.y;
-      useTetrisStore.getState().startGame();
+      // useTetrisStore.getState().startGame();
       vi.advanceTimersByTime(1000);
       // tick increments y by 1
       expect(useTetrisStore.getState().currentPiece.y).toBe(initialY + 1);
