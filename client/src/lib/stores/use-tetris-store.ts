@@ -180,8 +180,20 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     });
 
     socket.listen("penalty_lines", (numberOfPenaltyLines) => {
+      const newBoard = getBoardWithPenaltyLines(
+        get().board,
+        numberOfPenaltyLines,
+      );
+      const currentPiece = get().currentPiece;
+      const adjustedPiece = {
+        ...currentPiece,
+        y: Math.max(0, currentPiece.y - numberOfPenaltyLines),
+      };
       set({
-        board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
+        board: newBoard,
+        currentPiece: isValidPosition(newBoard, adjustedPiece)
+          ? adjustedPiece
+          : currentPiece,
       });
     });
 
@@ -245,12 +257,15 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   },
 
   hardDrop: async () => {
-    let currentPiece = get().currentPiece;
     while (
-      isValidPosition(get().board, { ...currentPiece, y: currentPiece.y + 1 })
+      isValidPosition(get().board, {
+        ...get().currentPiece,
+        y: get().currentPiece.y + 1,
+      })
     ) {
-      currentPiece = { ...currentPiece, y: currentPiece.y + 1 };
-      set({ currentPiece });
+      set((state) => ({
+        currentPiece: { ...state.currentPiece, y: state.currentPiece.y + 1 },
+      }));
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
     get().lockPiece();
