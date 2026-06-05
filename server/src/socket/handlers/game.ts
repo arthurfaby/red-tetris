@@ -1,25 +1,24 @@
-import { SocketPlayer, SocketServer } from '@red-tetris/shared'
-import { GameManager } from '../managers/GameManager'
+import {SocketPlayer, SocketServer} from '@red-tetris/shared'
+import {GameManager} from "../managers/GameManager";
+import {PlayerManager} from "../managers/PlayerManager";
 import { handlePrintError } from '../handle-print-error'
 
 export function handlerGame(
-    io: SocketServer,
-    socket: SocketPlayer,
-    gameManager: GameManager
-) {
+    socket: SocketPlayer,  io: SocketServer,  gameManager: GameManager, playerManager: PlayerManager) {
     socket.on('start_game', async (gameId: string) => {
         if (!socket.rooms.has(gameId)) {
             return
         }
         const piece = gameManager.getPiece(gameId)
         if (!piece) return
-
-        const socketsInRoom = await io.in(socket.data.gameId).fetchSockets()
-        socketsInRoom.forEach((s) => {
-            const startPiece = piece.getTetromino(s.id)
-            const nextPiece = piece.getTetromino(s.id)
-            s.emit('start_piece', startPiece, nextPiece)
-        })
+        const players = gameManager.getPlayerList(gameId)
+        for (const player of players) {
+            const playerSocket = playerManager.getSocket(player.id)
+            if (!playerSocket) continue
+            const startPiece = piece.getTetromino(player.id)
+            const nextPiece = piece.getTetromino(player.id)
+            playerSocket.emit('start_piece', startPiece, nextPiece)
+        }
     })
 
     socket.on('next_piece', async (room: string) => {
@@ -50,5 +49,19 @@ export function handlerGame(
         } catch (e: unknown) {
             handlePrintError(e)
         }
+    })
+
+    socket.on('new_spectrum', (spectrum: number[]) => {
+        try {
+            const player = playerManager.getPlayerOrFail(socket.id)
+            player.spectrum = spectrum
+            io.in(socket.data.gameId).emit('player_spectrum', socket.id, player.spectrum)
+        }
+        catch (e) {
+            console.error(e)
+        }
+
+
+
     })
 }
