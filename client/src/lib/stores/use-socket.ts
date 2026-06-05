@@ -4,6 +4,7 @@ import type {
   ClientToServerEvents,
   ServerToClientEvents,
 } from "@red-tetris/shared";
+import { toast } from "sonner";
 
 const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   "http://localhost:3000/",
@@ -40,15 +41,33 @@ export const useSocket = create<SocketStore>((set) => {
 
   return {
     socketId: socket.id,
-    connect: () => socket.connect(),
+    connect: () => {
+      try {
+        socket.connect();
+      } catch (_e: unknown) {
+        toast.error("Failed to connect to socket");
+      }
+    },
     emit: (event, ...args) => {
-      socket.emit(event, ...(args as never));
+      try {
+        socket.emit(event, ...(args as never));
+      } catch (_e: unknown) {
+        toast.error("Failed to connect to socket");
+      }
     },
     listen: (event, handler) => {
-      socket.on(event, handler as never);
+      try {
+        socket.on(event, handler as never);
+      } catch (_e: unknown) {
+        toast.error("Failed to connect to socket");
+      }
     },
     off: (event, handler) => {
-      socket.off(event, handler as never);
+      try {
+        socket.off(event, handler as never);
+      } catch (_e: unknown) {
+        toast.error("Failed to connect to socket");
+      }
     },
   };
 });

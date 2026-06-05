@@ -1,11 +1,12 @@
-import {SocketPlayer, SocketServer} from '@red-tetris/shared'
-import {GameManager} from "../managers/GameManager";
-import {PlayerManager} from "../managers/PlayerManager";
+import { SocketPlayer, SocketServer } from '@red-tetris/shared'
+import { GameManager } from '../managers/GameManager'
 import { handlePrintError } from '../handle-print-error'
 import { PlayerManager } from '../managers/PlayerManager'
 
 export function handlerGame(
-    socket: SocketPlayer,  io: SocketServer,  gameManager: GameManager,
+    socket: SocketPlayer,
+    io: SocketServer,
+    gameManager: GameManager,
     playerManager: PlayerManager
 ) {
     socket.on('start_game', async (gameId: string) => {
@@ -91,9 +92,12 @@ export function handlerGame(
         try {
             const player = playerManager.getPlayerOrFail(socket.id)
             player.spectrum = spectrum
-            io.in(socket.data.gameId).emit('player_spectrum', socket.id, player.spectrum)
-        }
-        catch (e) {
+            io.in(socket.data.gameId).emit(
+                'player_spectrum',
+                socket.id,
+                player.spectrum
+            )
+        } catch (e) {
             console.error(e)
         }
     })

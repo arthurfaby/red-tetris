@@ -5,6 +5,7 @@ import {
   GRID_WIDTH,
   type PlayerListData,
   POINTS_PER_LINE,
+  type ServerToClientEvents,
   Tetromino,
   type TetrominoType,
 } from "@red-tetris/shared";
@@ -67,6 +68,9 @@ export interface TetrisStore {
   setOpponent: (id: string, spectrum: number[]) => void;
   setNextPiece: (nextPiece: TetrominoType) => void;
   setBoard: (board: TetrominoType[][]) => void;
+  setGameOver: (
+    payload: Parameters<ServerToClientEvents["game_over"]>[0],
+  ) => void;
   addPenaltyLines: (numberOfPenaltyLines: number) => void;
 }
 
@@ -101,18 +105,30 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   },
 
   setNextPiece: (nextPiece: TetrominoType) => {
-    set({nextPiece: nextPiece});
+    set({ nextPiece: nextPiece });
   },
 
-  setBoard: (board: TetrominoType[][])=> {
-    set({board: board});
+  setBoard: (board: TetrominoType[][]) => {
+    set({ board: board });
   },
 
   setRoom: (roomName: string) => set({ room: roomName }),
 
   addPenaltyLines: (numberOfPenaltyLines: number) => {
+    const newBoard = getBoardWithPenaltyLines(
+      get().board,
+      numberOfPenaltyLines,
+    );
+    const currentPiece = get().currentPiece;
+    const adjustedPiece = {
+      ...currentPiece,
+      y: Math.max(0, currentPiece.y - numberOfPenaltyLines),
+    };
     set({
-      board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
+      board: newBoard,
+      currentPiece: isValidPosition(newBoard, adjustedPiece)
+        ? adjustedPiece
+        : currentPiece,
     });
   },
 
@@ -129,6 +145,16 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     });
   },
 
+  setGameOver: (payload) => {
+    set({
+      isPlayerDead: true,
+      isPlaying: false,
+      isGameOver: true,
+      winner: payload,
+    });
+    clearInterval(get().intervalId);
+  },
+
   startGame: (
     startPiece: TetrominoType,
     nextPiece: TetrominoType,
@@ -136,7 +162,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   ) => {
     if (get().isPlaying && !get().isGameOver) return;
     const opponents: Opponent[] = playerList
-      .filter((player) => player.id !== useSocket.getState().id)
+      .filter((player) => player.id !== useSocket.getState().socketId)
       .map((player) => ({
         id: player.id,
         username: player.username,
@@ -155,7 +181,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       isPlaying: true,
       isGameOver: false,
       isPlayerDead: false,
-      // TODO isSoloGame: opponents.length === 0
+      // TODO isSoloGame: opponents.length === 0,
       winner: null,
       score: 0,
       linesCleared: 0,
@@ -177,24 +203,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
 
     socket.listen("next_piece", (next_piece) => {
       set({ nextPiece: next_piece });
-    });
-
-    socket.listen("penalty_lines", (numberOfPenaltyLines) => {
-      const newBoard = getBoardWithPenaltyLines(
-        get().board,
-        numberOfPenaltyLines,
-      );
-      const currentPiece = get().currentPiece;
-      const adjustedPiece = {
-        ...currentPiece,
-        y: Math.max(0, currentPiece.y - numberOfPenaltyLines),
-      };
-      set({
-        board: newBoard,
-        currentPiece: isValidPosition(newBoard, adjustedPiece)
-          ? adjustedPiece
-          : currentPiece,
-      });
     });
 
     socket.listen("game_over", (payload) => {
