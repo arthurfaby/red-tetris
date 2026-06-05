@@ -1,4 +1,4 @@
-import {TetrominoType} from "./tetrominos";
+import type {TetrominoType} from "./tetrominos";
 import {Server, Socket} from "socket.io";
 
 export type PlayerListData = {
