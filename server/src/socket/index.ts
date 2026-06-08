@@ -6,9 +6,11 @@ import { PlayerManager } from './managers/PlayerManager'
 import { Player } from '../domain/Player'
 import { SocketPlayer } from '@red-tetris/shared'
 
-export const registerSocketHandlers = (app: FastifyInstance) => {
-    const gameManager = new GameManager()
-    const playerManager = new PlayerManager()
+export const registerSocketHandlers = (
+    app: FastifyInstance,
+    gameManager: GameManager,
+    playerManager: PlayerManager
+) => {
     app.io.on('connection', (socket: SocketPlayer) => {
         app.log.info(`Client connected: ${socket.id}`)
         const newPlayer = new Player(socket.id, socket.id)
