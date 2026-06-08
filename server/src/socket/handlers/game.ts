@@ -1,7 +1,7 @@
 import { SocketPlayer, SocketServer } from '@red-tetris/shared'
 import { GameManager } from '../managers/GameManager'
-import { handlePrintError } from '../handle-print-error'
 import { PlayerManager } from '../managers/PlayerManager'
+import { handlePrintError } from '../handle-print-error'
 import { handleWin } from '../handle-win'
 
 export function handlerGame(

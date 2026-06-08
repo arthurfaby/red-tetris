@@ -42,4 +42,7 @@ export class PlayerManager {
         this.#players = this.#players.filter((player) => player.id !== playerId)
         this.#sockets.delete(playerId)
     }
+    get sockets() {
+        return this.#sockets
+    }
 }
