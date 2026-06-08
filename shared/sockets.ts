@@ -4,7 +4,8 @@ import {JoinGameStatus} from "./status";
 
 export type PlayerListData = {
     username: string,
-    id: string
+    id: string,
+    ko: boolean
 }
 
 export interface ServerToClientEvents {
@@ -16,6 +17,7 @@ export interface ServerToClientEvents {
     player_spectrum: (id: string, spectrum: number[]) => void
     penalty_lines: (numberOfPenaltyLines: number) => void
     game_over: (payload: {id: string, username: string}) => void
+    ko: (playerId: string) => void
 }
 
 export interface ClientToServerEvents {

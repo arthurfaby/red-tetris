@@ -16,7 +16,7 @@ export class GameManager {
 
     getGameOrFail(gameId: string): Game {
         const game = this.#games.get(gameId)
-        if (!game) throw new Error(`Unknown player ID: ${gameId}`)
+        if (!game) throw new Error(`Unknown game ID: ${gameId}`)
         return game
     }
 
@@ -67,6 +67,7 @@ export class GameManager {
         return game.playerList.map((player) => ({
             username: player.username,
             id: player.id,
+            ko: player.isDead,
         }))
     }
 }

@@ -7,6 +7,7 @@ import { GameManager } from '../managers/GameManager'
 import { PlayerManager } from '../managers/PlayerManager'
 import { handleNewLeader } from '../handle-new-leader'
 import { handlePrintError } from '../handle-print-error'
+import { handleWin } from '../handle-win'
 
 export function handlerSocketConnection(
     socket: SocketPlayer,
@@ -54,13 +55,15 @@ export function handlerSocketConnection(
     socket.on('leave_game', (gameId) => {
         try {
             const player = playerManager.getPlayerOrFail(socket.id)
+            const game = gameManager.getGameOrFail(gameId)
 
             socket.leave(gameId)
 
             gameManager.leaveGame(gameId, player.id)
 
             io.in(gameId).emit('player_list', gameManager.getPlayerList(gameId))
-            handleNewLeader(gameId, gameManager, playerManager)
+            handleNewLeader(io, gameId, gameManager)
+            handleWin(io, socket, game, player)
         } catch (e: unknown) {
             handlePrintError(e)
         }
@@ -69,6 +72,7 @@ export function handlerSocketConnection(
     socket.on('disconnecting', () => {
         try {
             const player = playerManager.getPlayerOrFail(socket.id)
+            const game = gameManager.getGameOrFail(socket.data.gameId)
 
             socket.leave(socket.data.gameId)
 
@@ -78,7 +82,8 @@ export function handlerSocketConnection(
                 'player_list',
                 gameManager.getPlayerList(socket.data.gameId)
             )
-            handleNewLeader(socket.data.gameId, gameManager, playerManager)
+            handleNewLeader(io, socket.data.gameId, gameManager)
+            handleWin(io, socket, game, player)
         } catch (e: unknown) {
             handlePrintError(e)
         }

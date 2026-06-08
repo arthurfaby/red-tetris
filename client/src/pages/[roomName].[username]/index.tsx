@@ -12,6 +12,7 @@ export default function Room() {
   const isGameOver = useTetrisStore((state) => state.isGameOver);
   const isPlayerDead = useTetrisStore((state) => state.isPlayerDead);
   const winner = useTetrisStore((state) => state.winner);
+  const isSoloGame = useTetrisStore((state) => state.isSoloGame);
   const socketId = useSocket((state) => state.socketId);
 
   if (isPlaying) {
@@ -37,7 +38,7 @@ export default function Room() {
         <CardContent className="">
           {players.length > 0 && !isPlaying && (
             <>
-              {winner && (
+              {!isSoloGame && winner && (
                 <p className="text-green-400 mb-4">
                   {winner.id === socketId
                     ? "You have "

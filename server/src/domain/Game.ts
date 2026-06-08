@@ -14,7 +14,7 @@ export class Game {
     }
 
     get isSoloGame(): boolean {
-        return this.#playerList.length === 1
+        return this.#status != 'IN_LOBBY' && this.#playerList.length === 1
     }
 
     get status(): GameStatus {
@@ -51,9 +51,9 @@ export class Game {
 
     get winnerOrNull() {
         const playerNotDead = this.#playerList.filter((p) => !p.isDead)
-        if (playerNotDead.length > 1) {
-            return null
+        if (playerNotDead.length <= 1 && this.#playerList.length > 1) {
+            return playerNotDead[0]
         }
-        return playerNotDead[0]
+        return null
     }
 }

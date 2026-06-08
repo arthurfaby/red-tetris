@@ -11,8 +11,10 @@ export function TetrisGame() {
   return (
     <div className="h-svh w-screen bg-background text-foreground flex flex-col items-center justify-center gap-3 p-3 overflow-hidden lg:flex-row lg:items-center lg:gap-8 lg:p-6">
       <TetrisInfoLayout />
-      <TetrisBoardLayout />
-      <TetrisSpectrumsLayout />
+      <div className="flex flex-row items-stretch justify-center gap-3 w-full min-h-0 lg:w-auto lg:contents">
+        <TetrisBoardLayout />
+        <TetrisSpectrumsLayout />
+      </div>
     </div>
   );
 }

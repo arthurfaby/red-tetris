@@ -6,7 +6,7 @@ export default function App() {
   return (
     <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <Outlet />
-      <Toaster position="top-center" visibleToasts={2} />
+      <Toaster position="top-center" visibleToasts={1} />
     </ThemeProvider>
   );
 }

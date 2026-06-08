@@ -31,6 +31,7 @@ export interface TetrominoState {
 export interface Opponent {
   id: string;
   username: string;
+  ko: boolean;
   spectrum: number[];
 }
 
@@ -72,6 +73,7 @@ export interface TetrisStore {
     payload: Parameters<ServerToClientEvents["game_over"]>[0],
   ) => void;
   addPenaltyLines: (numberOfPenaltyLines: number) => void;
+  setKo: (playerId: string) => void;
 }
 
 export const useTetrisStore = create<TetrisStore>((set, get) => ({
@@ -130,6 +132,8 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         ? adjustedPiece
         : currentPiece,
     });
+
+    useSocket.getState().emit("new_spectrum", getSpectrum(get().board));
   },
 
   // --- ACTIONS ---
@@ -155,6 +159,15 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     clearInterval(get().intervalId);
   },
 
+  setKo(playerId) {
+    set({
+      opponents: get().opponents.map((opponent) => ({
+        ...opponent,
+        ko: playerId === opponent.id ? true : opponent.ko,
+      })),
+    });
+  },
+
   startGame: (
     startPiece: TetrominoType,
     nextPiece: TetrominoType,
@@ -167,21 +180,14 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         id: player.id,
         username: player.username,
         spectrum: new Array(GRID_WIDTH).fill(0),
+        ko: false,
       }));
     set({ opponents });
-
-    const socket = useSocket.getState();
-
-    // Clean up previous game listeners before re-registering
-    socket.off("next_piece");
-    socket.off("penalty_lines");
-    socket.off("game_over");
-
     set({
       isPlaying: true,
       isGameOver: false,
       isPlayerDead: false,
-      // TODO isSoloGame: opponents.length === 0,
+      isSoloGame: opponents.length === 0,
       winner: null,
       score: 0,
       linesCleared: 0,
@@ -199,20 +205,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       intervalId: +setInterval(() => {
         get().tick();
       }, 1000),
-    });
-
-    socket.listen("next_piece", (next_piece) => {
-      set({ nextPiece: next_piece });
-    });
-
-    socket.listen("game_over", (payload) => {
-      set({
-        isPlayerDead: true,
-        isPlaying: false,
-        isGameOver: true,
-        winner: payload,
-      });
-      clearInterval(get().intervalId);
     });
   },
 

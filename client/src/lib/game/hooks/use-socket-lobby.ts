@@ -41,12 +41,7 @@ export function useSocketLobby() {
     };
 
     const onSetLeader = (newLeaderId: string) => {
-      setLeaderId((prevLeaderId) => {
-        if (newLeaderId === socketId && prevLeaderId !== socketId) {
-          toast.info("You are now leader of this game");
-        }
-        return newLeaderId;
-      });
+      setLeaderId(newLeaderId);
     };
 
     const onPlayerList = (playerList: PlayerListData[]) => {
