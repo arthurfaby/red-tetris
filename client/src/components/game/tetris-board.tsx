@@ -14,7 +14,7 @@ export function TetrisBoard() {
     <div
       className={cn(
         "grid grid-cols-[repeat(10,32px)] grid-rows-[repeat(20,32px)]",
-        isDead ? "grayscale" : "",
+        isDead && "grayscale",
       )}
     >
       {displayBoard.map((row, y) =>

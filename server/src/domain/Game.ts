@@ -29,6 +29,14 @@ export class Game {
         return this.#piece
     }
 
+    get winnerOrNull() {
+        const playerNotDead = this.#playerList.filter((p) => !p.isDead)
+        if (playerNotDead.length <= 1 && this.#playerList.length > 1) {
+            return playerNotDead[0]
+        }
+        return null
+    }
+
     setStatus(status: GameStatus) {
         this.#status = status
     }
@@ -47,13 +55,5 @@ export class Game {
 
     getPlayer(playerId: string) {
         return this.#playerList.find((p) => p.id === playerId)
-    }
-
-    get winnerOrNull() {
-        const playerNotDead = this.#playerList.filter((p) => !p.isDead)
-        if (playerNotDead.length <= 1 && this.#playerList.length > 1) {
-            return playerNotDead[0]
-        }
-        return null
     }
 }

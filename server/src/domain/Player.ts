@@ -11,7 +11,7 @@ export class Player {
         username: string
     ) {
         this.#username = username
-        this.#isDead = true
+        this.#isDead = false
     }
 
     get isDead(): boolean {
@@ -23,7 +23,7 @@ export class Player {
     }
 
     resetState() {
-        this.#isDead = true
+        this.#isDead = false
     }
 
     get username() {

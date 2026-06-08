@@ -16,11 +16,14 @@ export default defineConfig([
       reactRefresh.configs.vite,
     ],
     rules: {
-      "@typescript-eslint/no-unused-vars": ["error", {
-        "argsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-      }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
     },
     languageOptions: {
       ecmaVersion: 2020,
