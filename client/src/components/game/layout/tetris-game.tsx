@@ -3,8 +3,11 @@ import { TetrisInfoLayout } from "@/components/game/layout/tetris-info-layout.ts
 import { TetrisBoardLayout } from "@/components/game/layout/tetris-board-layout.tsx";
 import { TetrisSpectrumsLayout } from "@/components/game/layout/tetris-spectrums-layout.tsx";
 import { useSocketGame } from "@/lib/game/hooks/use-socket-game.ts";
+import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 
 export function TetrisGame() {
+  const isSoloGame = useTetrisStore((state) => state.isSoloGame);
+
   useKeyboard();
   useSocketGame();
 
@@ -13,7 +16,7 @@ export function TetrisGame() {
       <TetrisInfoLayout />
       <div className="flex flex-row items-stretch justify-center gap-3 w-full min-h-0 lg:w-auto lg:contents">
         <TetrisBoardLayout />
-        <TetrisSpectrumsLayout />
+        {!isSoloGame && <TetrisSpectrumsLayout />}
       </div>
     </div>
   );
