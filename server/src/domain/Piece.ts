@@ -11,7 +11,7 @@ export class Piece {
 
     public resetState(listPlayers: Player[]) {
         this.tetrominos = []
-        this.listPlayerNumber = new Map()
+        this._listPlayerNumber = new Map()
         listPlayers.forEach((player) => {
             this._listPlayerNumber.set(player.id, 0)
         })
