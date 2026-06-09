@@ -49,6 +49,12 @@ export class GameManager {
         return game.piece
     }
 
+    getPieceOrFail(gameId: string): Piece {
+        const game = this.#games.get(gameId)
+        if (!game) throw new Error(`Cannot get Piece : ${gameId}`)
+        return game.piece
+    }
+
     getLeader(gameId: string) {
         const game = this.#games.get(gameId)
         if (!game) return null

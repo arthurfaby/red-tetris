@@ -10,6 +10,8 @@ import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 
 export function TetrisSpectrumsLayout() {
   const opponents = useTetrisStore((state) => state.opponents);
+  const notDeadOpponents = opponents.filter((op) => !op.ko).length;
+
   return (
     <div className="w-24 sm:w-44 md:w-56 lg:w-72 h-full lg:h-160 max-h-full min-w-0">
       <Card className="flex flex-col h-full py-2 lg:py-4">
@@ -21,7 +23,7 @@ export function TetrisSpectrumsLayout() {
             variant="secondary"
             className="shrink-0 text-[10px] lg:text-xs px-1.5 py-0"
           >
-            {opponents.filter((op) => !op.ko).length} en vie
+            {notDeadOpponents} en vie
           </Badge>
         </CardHeader>
         <CardContent className="flex-1 overflow-y-auto min-h-0 px-2 lg:px-4">

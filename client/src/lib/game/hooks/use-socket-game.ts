@@ -38,6 +38,7 @@ export function useSocketGame() {
       off("player_spectrum", onPlayerSpectrum);
       off("next_piece", onNextPiece);
       off("penalty_lines", onPenaltyLines);
+      off("ko", onKo);
     };
   }, [listen, off, setOpponent, setNextPiece, addPenaltyLines, setKo]);
 }

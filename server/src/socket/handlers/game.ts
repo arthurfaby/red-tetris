@@ -15,11 +15,8 @@ export function handlerGame(
             if (!socket.rooms.has(gameId)) {
                 return
             }
-            const piece = gameManager.getPiece(gameId)
-            if (!piece) return
-
-            const game = gameManager.getGame(gameId)
-            if (!game) return
+            const piece = gameManager.getPieceOrFail(gameId)
+            const game = gameManager.getGameOrFail(gameId)
 
             if (gameManager.getLeader(gameId)?.id !== socket.id) {
                 return
@@ -30,7 +27,6 @@ export function handlerGame(
             const players = gameManager.getPlayerList(gameId)
             for (const playerData of players) {
                 const player = playerManager.getPlayerOrFail(playerData.id)
-                player.setDeath(false)
                 const playerSocket = playerManager.getSocket(player.id)
                 if (!playerSocket) continue
                 const startPiece = piece.getTetromino(player.id)
@@ -76,7 +72,7 @@ export function handlerGame(
 
             player.setDeath(true)
 
-            handleWin(io, socket, game, player)
+            handleWin(io, socket, game)
 
             io.in(socket.data.gameId).emit('ko', player.id)
         } catch (e: unknown) {

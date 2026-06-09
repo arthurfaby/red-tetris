@@ -17,7 +17,6 @@ export function useSocketLobby() {
   const listen = useSocket((state) => state.listen);
   const emit = useSocket((state) => state.emit);
   const off = useSocket((state) => state.off);
-  const socketId = useSocket((state) => state.socketId);
 
   const startGameStore = useTetrisStore((state) => state.startGame);
   const setRoom = useTetrisStore((state) => state.setRoom);
@@ -95,7 +94,6 @@ export function useSocketLobby() {
     listen,
     emit,
     off,
-    socketId,
     setGameOver,
   ]);
 

@@ -63,7 +63,7 @@ export function handlerSocketConnection(
 
             io.in(gameId).emit('player_list', gameManager.getPlayerList(gameId))
             handleNewLeader(io, gameId, gameManager)
-            handleWin(io, socket, game, player)
+            handleWin(io, socket, game)
         } catch (e: unknown) {
             handlePrintError(e)
         }
@@ -83,7 +83,7 @@ export function handlerSocketConnection(
                 gameManager.getPlayerList(socket.data.gameId)
             )
             handleNewLeader(io, socket.data.gameId, gameManager)
-            handleWin(io, socket, game, player)
+            handleWin(io, socket, game)
         } catch (e: unknown) {
             handlePrintError(e)
         }
