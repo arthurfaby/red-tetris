@@ -1,15 +1,15 @@
 import { GameManager } from './managers/GameManager'
-import { PlayerManager } from './managers/PlayerManager'
+import { SocketServer } from '@red-tetris/shared'
 
 export function handleNewLeader(
+    io: SocketServer,
     gameId: string,
-    gameManager: GameManager,
-    playerManager: PlayerManager
+    gameManager: GameManager
 ) {
     const newLeader = gameManager.getLeader(gameId)
     if (!newLeader) {
         gameManager.deleteGame(gameId)
         return
     }
-    playerManager.getSocket(newLeader.id)?.emit('set_leader', newLeader.id)
+    io.in(gameId).emit('set_leader', newLeader.id)
 }

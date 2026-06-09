@@ -4,11 +4,20 @@ import { TETROMINO_CLASSES } from "@/lib/game/constants.ts";
 
 interface TetrisSpectrumProps {
   spectrum: number[];
+  ko: boolean;
 }
 
-export function TetrisSpectrum({ spectrum }: TetrisSpectrumProps) {
+export function TetrisSpectrum({ spectrum, ko }: TetrisSpectrumProps) {
   function isFilled(limitHeight: number, heightToCheck: number) {
     return GRID_HEIGHT - heightToCheck <= limitHeight;
+  }
+
+  if (ko) {
+    return (
+      <div className="flex justify-center items-center w-full max-h-full max-w-full aspect-1/2">
+        <span className="text-lg text-red-400">K.O.</span>
+      </div>
+    );
   }
 
   return (

@@ -10,13 +10,26 @@ export class GameManager {
         this.#games = new Map()
     }
 
-    joinGame(gameId: string, player: Player) {
+    getGame(gameId: string): Game | undefined {
+        return this.#games.get(gameId)
+    }
+
+    getGameOrFail(gameId: string): Game {
+        const game = this.#games.get(gameId)
+        if (!game) throw new Error(`Unknown game ID: ${gameId}`)
+        return game
+    }
+
+    // Return true if game is created, false otherwise
+    joinGame(gameId: string, player: Player): boolean {
         const game = this.#games.get(gameId)
         if (!game) {
             const newGame = new Game(player)
             this.#games.set(gameId, newGame)
+            return true
         } else {
             game.addPlayer(player)
+            return false
         }
     }
 
@@ -33,6 +46,12 @@ export class GameManager {
     getPiece(gameId: string): Piece | null {
         const game = this.#games.get(gameId)
         if (!game) return null
+        return game.piece
+    }
+
+    getPieceOrFail(gameId: string): Piece {
+        const game = this.#games.get(gameId)
+        if (!game) throw new Error(`Cannot get Piece : ${gameId}`)
         return game.piece
     }
 
@@ -54,6 +73,7 @@ export class GameManager {
         return game.playerList.map((player) => ({
             username: player.username,
             id: player.id,
+            ko: player.isDead,
         }))
     }
 }

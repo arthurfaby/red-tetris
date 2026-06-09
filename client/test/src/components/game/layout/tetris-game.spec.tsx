@@ -36,7 +36,7 @@ describe("TetrisGame", () => {
   it("renders root container with full-screen background classes", () => {
     const { container } = render(<TetrisGame />);
     const wrapper = container.firstChild as HTMLElement;
-    expect(wrapper.className).toContain("min-h-screen");
+    expect(wrapper.className).toContain("h-svh");
     expect(wrapper.className).toContain("bg-background");
   });
 });

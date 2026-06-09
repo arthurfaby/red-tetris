@@ -5,6 +5,7 @@ import {
   GRID_WIDTH,
   type PlayerListData,
   POINTS_PER_LINE,
+  type ServerToClientEvents,
   Tetromino,
   type TetrominoType,
 } from "@red-tetris/shared";
@@ -30,6 +31,7 @@ export interface TetrominoState {
 export interface Opponent {
   id: string;
   username: string;
+  ko: boolean;
   spectrum: number[];
 }
 
@@ -40,7 +42,10 @@ export interface TetrisStore {
   score: number;
   linesCleared: number;
   isPlaying: boolean;
+  isPlayerDead: boolean;
   isGameOver: boolean;
+  isSoloGame: boolean;
+  winner: { id: string; username: string } | null;
   room: string | null;
   opponents: Opponent[];
 
@@ -64,7 +69,11 @@ export interface TetrisStore {
   setOpponent: (id: string, spectrum: number[]) => void;
   setNextPiece: (nextPiece: TetrominoType) => void;
   setBoard: (board: TetrominoType[][]) => void;
+  setGameOver: (
+    payload: Parameters<ServerToClientEvents["game_over"]>[0],
+  ) => void;
   addPenaltyLines: (numberOfPenaltyLines: number) => void;
+  setKo: (playerId: string) => void;
 }
 
 export const useTetrisStore = create<TetrisStore>((set, get) => ({
@@ -80,8 +89,11 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   nextPiece: Tetromino.Z,
   score: 0,
   linesCleared: 0,
+  isSoloGame: false,
   isPlaying: false,
+  isPlayerDead: false,
   isGameOver: false,
+  winner: null,
   intervalId: 0,
   room: null,
   opponents: [],
@@ -95,19 +107,33 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   },
 
   setNextPiece: (nextPiece: TetrominoType) => {
-    set({nextPiece: nextPiece});
+    set({ nextPiece: nextPiece });
   },
 
-  setBoard: (board: TetrominoType[][])=> {
-    set({board: board});
+  setBoard: (board: TetrominoType[][]) => {
+    set({ board: board });
   },
 
   setRoom: (roomName: string) => set({ room: roomName }),
 
   addPenaltyLines: (numberOfPenaltyLines: number) => {
+    const newBoard = getBoardWithPenaltyLines(
+      get().board,
+      numberOfPenaltyLines,
+    );
+    const currentPiece = get().currentPiece;
+    const adjustedPiece = {
+      ...currentPiece,
+      y: Math.max(0, currentPiece.y - numberOfPenaltyLines),
+    };
     set({
-      board: getBoardWithPenaltyLines(get().board, numberOfPenaltyLines),
+      board: newBoard,
+      currentPiece: isValidPosition(newBoard, adjustedPiece)
+        ? adjustedPiece
+        : currentPiece,
     });
+
+    useSocket.getState().emit("new_spectrum", getSpectrum(get().board));
   },
 
   // --- ACTIONS ---
@@ -122,6 +148,26 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       }, 1000),
     });
   },
+
+  setGameOver: (payload) => {
+    set({
+      isPlayerDead: true,
+      isPlaying: false,
+      isGameOver: true,
+      winner: payload,
+    });
+    clearInterval(get().intervalId);
+  },
+
+  setKo(playerId) {
+    set({
+      opponents: get().opponents.map((opponent) => ({
+        ...opponent,
+        ko: playerId === opponent.id ? true : opponent.ko,
+      })),
+    });
+  },
+
   startGame: (
     startPiece: TetrominoType,
     nextPiece: TetrominoType,
@@ -129,14 +175,23 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   ) => {
     if (get().isPlaying && !get().isGameOver) return;
     const opponents: Opponent[] = playerList
-      .filter((player) => player.id !== useSocket.getState().id)
+      .filter((player) => player.id !== useSocket.getState().socketId)
       .map((player) => ({
         id: player.id,
         username: player.username,
         spectrum: new Array(GRID_WIDTH).fill(0),
+        ko: false,
       }));
     set({ opponents });
-    set({ isPlaying: true, isGameOver: false, score: 0, linesCleared: 0 });
+    set({
+      isPlaying: true,
+      isGameOver: false,
+      isPlayerDead: false,
+      isSoloGame: opponents.length === 0,
+      winner: null,
+      score: 0,
+      linesCleared: 0,
+    });
     set({ board: createEmptyBoard(GRID_HEIGHT, GRID_WIDTH) });
     set({
       currentPiece: {
@@ -151,7 +206,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         get().tick();
       }, 1000),
     });
-
   },
 
   moveLeft: () => {
@@ -203,12 +257,15 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   },
 
   hardDrop: async () => {
-    let currentPiece = get().currentPiece;
     while (
-      isValidPosition(get().board, { ...currentPiece, y: currentPiece.y + 1 })
+      isValidPosition(get().board, {
+        ...get().currentPiece,
+        y: get().currentPiece.y + 1,
+      })
     ) {
-      currentPiece = { ...currentPiece, y: currentPiece.y + 1 };
-      set({ currentPiece });
+      set((state) => ({
+        currentPiece: { ...state.currentPiece, y: state.currentPiece.y + 1 },
+      }));
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
     get().lockPiece();
@@ -242,8 +299,9 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         rotation: 0,
       })
     ) {
-      set({ isGameOver: true, isPlaying: false });
+      set({ isPlayerDead: true, isPlaying: false, isGameOver: false });
       clearInterval(get().intervalId);
+      useSocket.getState().emit("death");
       return;
     }
 

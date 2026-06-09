@@ -10,6 +10,7 @@ export function useSocketGame() {
   const setOpponent = useTetrisStore((state) => state.setOpponent);
   const setNextPiece = useTetrisStore((state) => state.setNextPiece);
   const addPenaltyLines = useTetrisStore((state) => state.addPenaltyLines);
+  const setKo = useTetrisStore((state) => state.setKo);
 
   useEffect(() => {
     const onPlayerSpectrum = (id: string, spectrum: number[]) => {
@@ -24,14 +25,20 @@ export function useSocketGame() {
       addPenaltyLines(numberOfPenaltyLines);
     };
 
+    const onKo = (playerId: string) => {
+      setKo(playerId);
+    };
+
     listen("player_spectrum", onPlayerSpectrum);
     listen("next_piece", onNextPiece);
     listen("penalty_lines", onPenaltyLines);
+    listen("ko", onKo);
 
     return () => {
       off("player_spectrum", onPlayerSpectrum);
       off("next_piece", onNextPiece);
       off("penalty_lines", onPenaltyLines);
+      off("ko", onKo);
     };
-  }, [listen, off, setOpponent, setNextPiece, addPenaltyLines]);
+  }, [listen, off, setOpponent, setNextPiece, addPenaltyLines, setKo]);
 }
