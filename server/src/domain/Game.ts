@@ -1,13 +1,24 @@
 import { Player } from './Player'
 import { Piece } from './Piece'
+import { GameStatus } from '@red-tetris/shared'
 
 export class Game {
     #playerList: Player[]
     #piece: Piece
+    #status: GameStatus
 
     constructor(leader: Player) {
         this.#playerList = [leader]
         this.#piece = new Piece(this.#playerList)
+        this.#status = 'IN_LOBBY'
+    }
+
+    get isSoloGame(): boolean {
+        return this.#status != 'IN_LOBBY' && this.#playerList.length === 1
+    }
+
+    get status(): GameStatus {
+        return this.#status
     }
 
     get playerList() {
@@ -16,6 +27,18 @@ export class Game {
 
     get piece() {
         return this.#piece
+    }
+
+    get winnerOrNull() {
+        const playerNotDead = this.#playerList.filter((p) => !p.isDead)
+        if (playerNotDead.length <= 1 && this.#playerList.length > 1) {
+            return playerNotDead[0]
+        }
+        return null
+    }
+
+    setStatus(status: GameStatus) {
+        this.#status = status
     }
 
     addPlayer(player: Player) {
@@ -28,5 +51,9 @@ export class Game {
         this.#playerList = this.#playerList.filter(
             (player) => player.id !== playerIdToRemove
         )
+    }
+
+    getPlayer(playerId: string) {
+        return this.#playerList.find((p) => p.id === playerId)
     }
 }

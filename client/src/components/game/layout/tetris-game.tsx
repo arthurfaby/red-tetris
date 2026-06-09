@@ -9,9 +9,9 @@ export function TetrisGame() {
   useSocketGame();
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
-      <div className="flex flex-col h-160 lg:flex-row items-start gap-6 lg:gap-10">
-        <TetrisInfoLayout />
+    <div className="h-svh w-screen bg-background text-foreground flex flex-col items-center justify-center gap-3 p-3 overflow-hidden lg:flex-row lg:items-center lg:gap-8 lg:p-6">
+      <TetrisInfoLayout />
+      <div className="flex flex-row items-stretch justify-center gap-3 w-full min-h-0 lg:w-auto lg:contents">
         <TetrisBoardLayout />
         <TetrisSpectrumsLayout />
       </div>

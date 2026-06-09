@@ -1,8 +1,15 @@
 import { useSocket } from "@/lib/stores/use-socket.ts";
 import { useEffect, useRef, useState } from "react";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
-import type { PlayerListData, TetrominoType } from "@red-tetris/shared";
+import {
+  JOIN_GAME_STATUS,
+  type JoinGameStatus,
+  type PlayerListData,
+  type ServerToClientEvents,
+  type TetrominoType,
+} from "@red-tetris/shared";
 import { useParams } from "@/router.ts";
+import { toast } from "sonner";
 
 export function useSocketLobby() {
   const { roomName, username } = useParams("/:roomName/:username");
@@ -13,9 +20,11 @@ export function useSocketLobby() {
 
   const startGameStore = useTetrisStore((state) => state.startGame);
   const setRoom = useTetrisStore((state) => state.setRoom);
+  const setGameOver = useTetrisStore((state) => state.setGameOver);
 
   const [players, setPlayers] = useState<PlayerListData[]>([]);
   const [leaderId, setLeaderId] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const playersRef = useRef<PlayerListData[]>([]);
 
   useEffect(() => {
@@ -30,8 +39,8 @@ export function useSocketLobby() {
       startGameStore(startPiece, nextPiece, playersRef.current);
     };
 
-    const onSetLeader = (id: string) => {
-      setLeaderId(id);
+    const onSetLeader = (newLeaderId: string) => {
+      setLeaderId(newLeaderId);
     };
 
     const onPlayerList = (playerList: PlayerListData[]) => {
@@ -39,9 +48,34 @@ export function useSocketLobby() {
       playersRef.current = playerList;
     };
 
+    const onJoinGame = (status: JoinGameStatus) => {
+      switch (status) {
+        case JOIN_GAME_STATUS.JOINED:
+          toast.success("Game joined successfully");
+          break;
+        case JOIN_GAME_STATUS.CREATED:
+          toast.success("Game created successfully");
+          break;
+        case JOIN_GAME_STATUS.ALREADY_LAUNCHED:
+          toast.error("Game is already launched");
+          setErrorMessage("Game is already launched");
+          break;
+        default:
+          toast.error("Error has occurred");
+      }
+    };
+
+    const onGameOver = (
+      payload: Parameters<ServerToClientEvents["game_over"]>[0],
+    ) => {
+      setGameOver(payload);
+    };
+
     listen("start_piece", onStartPiece);
     listen("set_leader", onSetLeader);
     listen("player_list", onPlayerList);
+    listen("join_game", onJoinGame);
+    listen("game_over", onGameOver);
 
     emit("join_game", { gameId: roomName, username: username });
 
@@ -49,9 +83,19 @@ export function useSocketLobby() {
       off("start_piece", onStartPiece);
       off("set_leader", onSetLeader);
       off("player_list", onPlayerList);
+      off("join_game", onJoinGame);
       emit("leave_game", roomName);
     };
-  }, [roomName, username, setRoom, startGameStore, listen, emit, off]);
+  }, [
+    roomName,
+    username,
+    setRoom,
+    startGameStore,
+    listen,
+    emit,
+    off,
+    setGameOver,
+  ]);
 
-  return { players, leaderId, roomName, emit };
+  return { players, leaderId, roomName, emit, errorMessage, setErrorMessage };
 }

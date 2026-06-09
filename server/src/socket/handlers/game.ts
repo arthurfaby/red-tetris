@@ -1,23 +1,40 @@
-import {SocketPlayer, SocketServer} from '@red-tetris/shared'
-import {GameManager} from "../managers/GameManager";
-import {PlayerManager} from "../managers/PlayerManager";
+import { SocketPlayer, SocketServer } from '@red-tetris/shared'
+import { GameManager } from '../managers/GameManager'
 import { handlePrintError } from '../handle-print-error'
+import { PlayerManager } from '../managers/PlayerManager'
+import { handleWin } from '../handle-win'
 
 export function handlerGame(
-    socket: SocketPlayer,  io: SocketServer,  gameManager: GameManager, playerManager: PlayerManager) {
+    socket: SocketPlayer,
+    io: SocketServer,
+    gameManager: GameManager,
+    playerManager: PlayerManager
+) {
     socket.on('start_game', async (gameId: string) => {
-        if (!socket.rooms.has(gameId)) {
-            return
-        }
-        const piece = gameManager.getPiece(gameId)
-        if (!piece) return
-        const players = gameManager.getPlayerList(gameId)
-        for (const player of players) {
-            const playerSocket = playerManager.getSocket(player.id)
-            if (!playerSocket) continue
-            const startPiece = piece.getTetromino(player.id)
-            const nextPiece = piece.getTetromino(player.id)
-            playerSocket.emit('start_piece', startPiece, nextPiece)
+        try {
+            if (!socket.rooms.has(gameId)) {
+                return
+            }
+            const piece = gameManager.getPieceOrFail(gameId)
+            const game = gameManager.getGameOrFail(gameId)
+
+            if (gameManager.getLeader(gameId)?.id !== socket.id) {
+                return
+            }
+
+            game.setStatus('LAUNCHED')
+
+            const players = gameManager.getPlayerList(gameId)
+            for (const playerData of players) {
+                const player = playerManager.getPlayerOrFail(playerData.id)
+                const playerSocket = playerManager.getSocket(player.id)
+                if (!playerSocket) continue
+                const startPiece = piece.getTetromino(player.id)
+                const nextPiece = piece.getTetromino(player.id)
+                playerSocket.emit('start_piece', startPiece, nextPiece)
+            }
+        } catch (e) {
+            handlePrintError(e)
         }
     })
 
@@ -38,14 +55,26 @@ export function handlerGame(
         try {
             const sockets = await io.in(socket.data.gameId).fetchSockets()
             sockets.forEach((otherSocket) => {
-                console.log(
-                    `Trying to send ${penaltyLines} to ${otherSocket.id}`
-                )
-                if (socket.id === otherSocket.id) return
+                const player = playerManager.getPlayerOrFail(otherSocket.id)
+                if (socket.id === otherSocket.id || player.isDead) return
 
                 otherSocket.emit('penalty_lines', penaltyLines)
-                console.log(`Sent`)
             })
+        } catch (e: unknown) {
+            handlePrintError(e)
+        }
+    })
+
+    socket.on('death', () => {
+        try {
+            const player = playerManager.getPlayerOrFail(socket.id)
+            const game = gameManager.getGameOrFail(socket.data.gameId)
+
+            player.setDeath(true)
+
+            handleWin(io, socket, game)
+
+            io.in(socket.data.gameId).emit('ko', player.id)
         } catch (e: unknown) {
             handlePrintError(e)
         }
@@ -55,13 +84,13 @@ export function handlerGame(
         try {
             const player = playerManager.getPlayerOrFail(socket.id)
             player.spectrum = spectrum
-            io.in(socket.data.gameId).emit('player_spectrum', socket.id, player.spectrum)
-        }
-        catch (e) {
+            io.in(socket.data.gameId).emit(
+                'player_spectrum',
+                socket.id,
+                player.spectrum
+            )
+        } catch (e) {
             console.error(e)
         }
-
-
-
     })
 }

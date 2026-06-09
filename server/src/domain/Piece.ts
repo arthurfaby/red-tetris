@@ -6,6 +6,12 @@ export class Piece {
     private tetrominos: TetrominoType[] = []
 
     constructor(listPlayers: Player[]) {
+        this.resetState(listPlayers)
+    }
+
+    public resetState(listPlayers: Player[]) {
+        this.tetrominos = []
+        this.listPlayerNumber = new Map()
         listPlayers.forEach((player) => {
             this.listPlayerNumber.set(player.id, 0)
         })

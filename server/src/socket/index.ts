@@ -14,6 +14,6 @@ export const registerSocketHandlers = (app: FastifyInstance) => {
         const newPlayer = new Player(socket.id, socket.id)
         playerManager.addOrUpdatePlayer(newPlayer, socket)
         handlerSocketConnection(socket, app.io, gameManager, playerManager)
-        handlerGame(socket,  app.io, gameManager, playerManager)
+        handlerGame(socket, app.io, gameManager, playerManager)
     })
 }

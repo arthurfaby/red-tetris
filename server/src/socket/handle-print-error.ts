@@ -3,5 +3,5 @@ export function handlePrintError(err: unknown) {
         console.error('[ERROR] ' + err.message)
         return
     }
-    console.log('[ERROR] ' + 'Unknown error')
+    console.error('[ERROR] ' + 'Unknown error')
 }
