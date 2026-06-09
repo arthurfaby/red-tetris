@@ -1,10 +1,14 @@
 import { buildApp } from './app'
 import { registerSocketHandlers } from './socket'
+import { GameManager } from './socket/managers/GameManager'
+import { PlayerManager } from './socket/managers/PlayerManager'
 
 const start = async () => {
     try {
         const app = await buildApp()
-        registerSocketHandlers(app)
+        const gameManager = new GameManager()
+        const playerManager = new PlayerManager()
+        registerSocketHandlers(app, gameManager, playerManager)
 
         await app.listen({ port: 3000, host: '0.0.0.0' })
         app.log.level = 'error'

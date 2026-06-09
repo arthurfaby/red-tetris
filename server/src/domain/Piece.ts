@@ -2,7 +2,7 @@ import { Tetromino, TetrominoType } from '@red-tetris/shared/tetrominos'
 import { Player } from './Player'
 
 export class Piece {
-    private listPlayerNumber: Map<string, number> = new Map()
+    private _listPlayerNumber: Map<string, number> = new Map()
     private tetrominos: TetrominoType[] = []
 
     constructor(listPlayers: Player[]) {
@@ -13,23 +13,23 @@ export class Piece {
         this.tetrominos = []
         this.listPlayerNumber = new Map()
         listPlayers.forEach((player) => {
-            this.listPlayerNumber.set(player.id, 0)
+            this._listPlayerNumber.set(player.id, 0)
         })
         this.addNewTetrominos()
     }
 
     public addPlayer(playerId: string) {
-        if (this.listPlayerNumber.has(playerId)) return
-        this.listPlayerNumber.set(playerId, 0)
+        if (this._listPlayerNumber.has(playerId)) return
+        this._listPlayerNumber.set(playerId, 0)
     }
 
     public updateListPlayerNumber(player: string) {
-        const newValue = this.listPlayerNumber.get(player) ?? 0
-        this.listPlayerNumber.set(player, newValue + 1)
+        const newValue = this._listPlayerNumber.get(player) ?? 0
+        this._listPlayerNumber.set(player, newValue + 1)
     }
 
     public getTetromino(player: string) {
-        const indexTetromino = this.listPlayerNumber.get(player) ?? 0
+        const indexTetromino = this._listPlayerNumber.get(player) ?? 0
         if (indexTetromino >= this.tetrominos.length) {
             this.addNewTetrominos()
         }
@@ -55,5 +55,9 @@ export class Piece {
             ]
         }
         return tetrominosSequence
+    }
+
+    get listPlayerNumber() {
+        return this._listPlayerNumber
     }
 }
