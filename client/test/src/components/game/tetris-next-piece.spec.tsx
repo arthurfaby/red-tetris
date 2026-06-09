@@ -1,10 +1,28 @@
 import { render, cleanup } from "@testing-library/react";
 import { TetrisNextPiece } from "@/components/game/tetris-next-piece.tsx";
+import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 import { Tetromino } from "@red-tetris/shared";
 import { expect } from "vitest";
 
 describe("TetrisNextPiece", () => {
   afterEach(() => cleanup());
+
+  beforeEach(() => {
+    useTetrisStore.setState({ isPlayerDead: false });
+  });
+
+  it("applies the grayscale class when the player is dead", () => {
+    useTetrisStore.setState({ isPlayerDead: true });
+    const { container } = render(<TetrisNextPiece type={Tetromino.O} />);
+    const grid = container.firstChild as HTMLElement;
+    expect(grid.className).toContain("grayscale");
+  });
+
+  it("does not apply the grayscale class when the player is alive", () => {
+    const { container } = render(<TetrisNextPiece type={Tetromino.O} />);
+    const grid = container.firstChild as HTMLElement;
+    expect(grid.className).not.toContain("grayscale");
+  });
 
   it("renders a grid for Tetromino.I (has empty rows filtered out)", () => {
     // I shape[0] = [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]]

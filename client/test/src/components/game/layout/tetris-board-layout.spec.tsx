@@ -17,6 +17,7 @@ describe("TetrisBoardLayout", () => {
     const { container } = render(<TetrisBoardLayout />);
     const wrapper = container.firstChild as HTMLElement;
     expect(wrapper.className).toContain("flex");
-    expect(wrapper.className).toContain("border-4");
+    const inner = wrapper.firstChild as HTMLElement;
+    expect(inner.className).toContain("border-4");
   });
 });

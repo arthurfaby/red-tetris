@@ -1,5 +1,14 @@
 import { render, screen, cleanup } from "@testing-library/react";
 import { TetrisSpectrumsLayout } from "@/components/game/layout/tetris-spectrums-layout.tsx";
+import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
+
+const mockSpectrum = [5, 4, 12, 3, 1, 0, 18, 3, 4, 2];
+const mockOpponents = Array.from({ length: 8 }, (_, i) => ({
+  id: `player-${i + 1}`,
+  username: `Joueur ${i + 1}`,
+  ko: i >= 6,
+  spectrum: mockSpectrum,
+}));
 
 vi.mock("@/components/game/tetris-spectrum.tsx", () => ({
   TetrisSpectrum: ({ spectrum }: { spectrum: number[] }) => (
@@ -29,6 +38,9 @@ vi.mock("@/components/ui/badge.tsx", () => ({
 }));
 
 describe("TetrisSpectrumsLayout", () => {
+  beforeEach(() => {
+    useTetrisStore.setState({ opponents: mockOpponents });
+  });
   afterEach(() => cleanup());
 
   it("renders 8 opponent slots", () => {

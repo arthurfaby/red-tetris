@@ -5,10 +5,18 @@ import { GRID_HEIGHT } from "@red-tetris/shared";
 describe("TetrisSpectrum", () => {
   afterEach(() => cleanup());
 
+  it("renders a K.O. message instead of the grid when ko is true", () => {
+    const { container, getByText } = render(
+      <TetrisSpectrum spectrum={[5, 4, 12]} ko={true} />,
+    );
+    expect(getByText("K.O.")).toBeInTheDocument();
+    expect(container.querySelectorAll(".grid").length).toBe(0);
+  });
+
   it("renders GRID_HEIGHT * spectrum.length cells total", () => {
     // spectrum has 10 columns, GRID_HEIGHT rows → 200 cells
     const spectrum = [5, 4, 12, 3, 1, 0, 18, 3, 4, 2];
-    const { container } = render(<TetrisSpectrum spectrum={spectrum} />);
+    const { container } = render(<TetrisSpectrum spectrum={spectrum} ko={false} />);
     const grid = container.firstChild as HTMLElement;
     expect(grid.children.length).toBe(GRID_HEIGHT * spectrum.length);
   });
@@ -18,7 +26,7 @@ describe("TetrisSpectrum", () => {
     // isFilled(5, 14) = 20-14<=5 = 6<=5 = false
     // isFilled(5, 15) = 20-15<=5 = 5<=5 = true
     const spectrum = [5];
-    const { container } = render(<TetrisSpectrum spectrum={spectrum} />);
+    const { container } = render(<TetrisSpectrum spectrum={spectrum} ko={false} />);
     const grid = container.firstChild as HTMLElement;
     // Total cells: 20 (GRID_HEIGHT * 1 column)
     expect(grid.children.length).toBe(GRID_HEIGHT);
@@ -39,14 +47,14 @@ describe("TetrisSpectrum", () => {
   });
 
   it("renders with empty spectrum", () => {
-    const { container } = render(<TetrisSpectrum spectrum={[]} />);
+    const { container } = render(<TetrisSpectrum spectrum={[]} ko={false} />);
     const grid = container.firstChild as HTMLElement;
     expect(grid.children.length).toBe(0);
   });
 
   it("renders with spectrum of all zeros (all unfilled)", () => {
     const spectrum = [0, 0, 0];
-    const { container } = render(<TetrisSpectrum spectrum={spectrum} />);
+    const { container } = render(<TetrisSpectrum spectrum={spectrum} ko={false} />);
     const grid = container.firstChild as HTMLElement;
     expect(grid.children.length).toBe(GRID_HEIGHT * spectrum.length);
     // All cells should be unfilled since limitHeight=0 means isFilled always false
@@ -60,7 +68,7 @@ describe("TetrisSpectrum", () => {
   it("renders with spectrum of max height (all filled)", () => {
     // limitHeight=20 → isFilled(20, x) = 20-x<=20 always true for x>=0
     const spectrum = [20];
-    const { container } = render(<TetrisSpectrum spectrum={spectrum} />);
+    const { container } = render(<TetrisSpectrum spectrum={spectrum} ko={false} />);
     const grid = container.firstChild as HTMLElement;
     expect(grid.children.length).toBe(GRID_HEIGHT);
     Array.from(grid.children).forEach((cell) => {
