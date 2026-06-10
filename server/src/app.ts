@@ -4,6 +4,7 @@ import fastifySocketIO from 'fastify-socket.io'
 import { apiRoutes } from './http'
 import fastifyStatic from '@fastify/static'
 import path from 'node:path'
+import sqlitePlugin from "./database";
 
 export const buildApp = async (): Promise<FastifyInstance> => {
     const app = Fastify({
@@ -37,6 +38,7 @@ export const buildApp = async (): Promise<FastifyInstance> => {
         },
     })
 
+    await app.register(sqlitePlugin)
     await app.register(apiRoutes, { prefix: '/api' })
 
     return app
