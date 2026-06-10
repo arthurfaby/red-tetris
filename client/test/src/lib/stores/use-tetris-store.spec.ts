@@ -65,7 +65,6 @@ describe("useTetrisStore", () => {
         intervalId: 0,
       });
       useTetrisStore.getState().startGame(Tetromino.I, Tetromino.L, []);
-      // intervalId should remain 0 (early return, no new interval created)
       expect(useTetrisStore.getState().intervalId).toBe(0);
     });
 
@@ -166,7 +165,12 @@ describe("useTetrisStore", () => {
 
     it("does not rotate when the rotated shape would go out of bounds", () => {
       useTetrisStore.setState({
-        currentPiece: { type: Tetromino.I, x: GRID_WIDTH - 1, y: 0, rotation: 0 },
+        currentPiece: {
+          type: Tetromino.I,
+          x: GRID_WIDTH - 1,
+          y: 0,
+          rotation: 0,
+        },
       });
       useTetrisStore.getState().rotate();
       expect(useTetrisStore.getState().currentPiece.rotation).toBe(0);
@@ -261,7 +265,12 @@ describe("useTetrisStore", () => {
 
       useTetrisStore.setState({
         board,
-        currentPiece: { type: Tetromino.O, x: 0, y: GRID_HEIGHT - 2, rotation: 0 },
+        currentPiece: {
+          type: Tetromino.O,
+          x: 0,
+          y: GRID_HEIGHT - 2,
+          rotation: 0,
+        },
         nextPiece: Tetromino.Z,
         room: "test-room",
       });
@@ -404,10 +413,14 @@ describe("useTetrisStore", () => {
       const state = useTetrisStore.getState();
       expect(state.board).toHaveLength(GRID_HEIGHT);
       expect(
-        state.board[GRID_HEIGHT - 1].every((cell) => cell === Tetromino.PENALTY),
+        state.board[GRID_HEIGHT - 1].every(
+          (cell) => cell === Tetromino.PENALTY,
+        ),
       ).toBe(true);
       expect(
-        state.board[GRID_HEIGHT - 2].every((cell) => cell === Tetromino.PENALTY),
+        state.board[GRID_HEIGHT - 2].every(
+          (cell) => cell === Tetromino.PENALTY,
+        ),
       ).toBe(true);
       expect(state.currentPiece.y).toBe(3);
       expect(mockEmit).toHaveBeenCalledWith("new_spectrum", expect.any(Array));

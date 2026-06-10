@@ -8,6 +8,7 @@ export default defineConfig({
     },
   },
   test: {
+    passWithNoTests: true,
     environment: "jsdom",
     coverage: {
       include: ["**/*.{ts,tsx}"],

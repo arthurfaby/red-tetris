@@ -74,7 +74,7 @@ describe("useSocket store", () => {
     useSocket.getState().emit("death");
     expect(toast.error).toHaveBeenCalledWith("Failed to connect to socket");
   });
-
+  //
   it("listen registers the handler on the socket", () => {
     const handler = vi.fn();
     useSocket.getState().listen("game_started" as never, handler as never);

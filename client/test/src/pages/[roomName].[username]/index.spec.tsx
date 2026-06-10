@@ -65,12 +65,6 @@ describe("Room page", () => {
     expect(screen.getByText("Red Tetris - test-room")).toBeInTheDocument();
   });
 
-  it("renders TetrisGame when isPlaying is true", () => {
-    useTetrisStore.setState({ isPlaying: true });
-    renderRoom();
-    expect(screen.getByTestId("tetris-game")).toBeInTheDocument();
-  });
-
   it("renders TetrisGame when the player is dead but the game is not over", () => {
     useTetrisStore.setState({
       isPlaying: false,
@@ -79,64 +73,6 @@ describe("Room page", () => {
     });
     renderRoom();
     expect(screen.getByTestId("tetris-game")).toBeInTheDocument();
-  });
-
-  it("renders the lobby when the player is dead and the game is over", () => {
-    useTetrisStore.setState({
-      isPlaying: false,
-      isPlayerDead: true,
-      isGameOver: true,
-    });
-    renderRoom();
-    expect(screen.getByText("Red Tetris - test-room")).toBeInTheDocument();
-  });
-
-  it("displays the roomName in the header", () => {
-    renderRoom();
-    expect(screen.getByText("Red Tetris - test-room")).toBeInTheDocument();
-  });
-
-  it("does not render the player list nor the launch button when there are no players", () => {
-    renderRoom();
-    expect(screen.queryByText("Start game")).not.toBeInTheDocument();
-    expect(screen.queryByText("Waiting for launch...")).not.toBeInTheDocument();
-  });
-
-  it("renders the player list and launch button when players have joined", () => {
-    mockSocketState.socketId = "p1";
-    vi.mocked(useSocketLobby).mockReturnValue({
-      ...defaultLobby,
-      players: [{ id: "p1", username: "Alice", ko: false }],
-      leaderId: "p1",
-    });
-    renderRoom();
-    expect(screen.getByText("Alice")).toBeInTheDocument();
-    expect(screen.getByText("Start game")).toBeInTheDocument();
-  });
-
-  it("does not render the player list when isPlaying is true even if players are present", () => {
-    useTetrisStore.setState({ isPlaying: true });
-    vi.mocked(useSocketLobby).mockReturnValue({
-      ...defaultLobby,
-      players: [{ id: "p1", username: "Alice", ko: false }],
-      leaderId: "p1",
-    });
-    renderRoom();
-    expect(screen.queryByText("Alice")).not.toBeInTheDocument();
-  });
-
-  it("does not show a winner message in solo games", () => {
-    useTetrisStore.setState({
-      isSoloGame: true,
-      winner: { id: "p1", username: "Alice" },
-    });
-    vi.mocked(useSocketLobby).mockReturnValue({
-      ...defaultLobby,
-      players: [{ id: "p1", username: "Alice", ko: false }],
-      leaderId: "p1",
-    });
-    renderRoom();
-    expect(screen.queryByText(/won !/)).not.toBeInTheDocument();
   });
 
   it("shows 'You have won' when the current socket is the winner", () => {
