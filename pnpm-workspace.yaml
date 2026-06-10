@@ -2,3 +2,8 @@ packages:
   - 'client'
   - 'server'
   - 'shared'
+allowBuilds:
+  better-sqlite3: false
+  esbuild: false
+  fastify-socket.io: false
+  msw: false
