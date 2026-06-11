@@ -26,12 +26,15 @@ export const buildApp = async (): Promise<FastifyInstance> => {
     })
 
     await app.register(cors, {
-        origin: 'http://localhost:5173',
+        origin: ['http://localhost:5173', 'http://0.0.0.0:3000'],
         methods: ['GET', 'POST', 'OPTIONS'],
     })
 
     await app.register(fastifySocketIO, {
-        cors: { origin: 'http://localhost:5173', methods: ['GET', 'POST'] },
+        cors: {
+            origin: ['http://localhost:5173', 'http://0.0.0.0:3000'],
+            methods: ['GET', 'POST'],
+        },
     })
 
     await app.register(apiRoutes, { prefix: '/api' })

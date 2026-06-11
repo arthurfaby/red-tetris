@@ -15,14 +15,6 @@ export default function Room() {
   const isSoloGame = useTetrisStore((state) => state.isSoloGame);
   const socketId = useSocket((state) => state.socketId);
 
-  if (isPlaying) {
-    return (
-      <section className="h-screen w-screen">
-        <TetrisGame />
-      </section>
-    );
-  }
-
   if (isPlaying || (isPlayerDead && !isGameOver)) {
     return (
       <section className="h-screen w-screen">
