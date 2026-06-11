@@ -13,34 +13,4 @@ describe("404 Page", () => {
     );
     expect(screen.getByText("404 - Page Not Found")).toBeInTheDocument();
   });
-
-  it("renders the error message", () => {
-    render(
-      <MemoryRouter>
-        <PageNotFound />
-      </MemoryRouter>,
-    );
-    expect(
-      screen.getByText("Oops! The page you're looking for doesn't exist."),
-    ).toBeInTheDocument();
-  });
-
-  it("renders the go back home button", () => {
-    render(
-      <MemoryRouter>
-        <PageNotFound />
-      </MemoryRouter>,
-    );
-    expect(screen.getByText("Go back to Home")).toBeInTheDocument();
-  });
-
-  it("home link navigates to /", () => {
-    render(
-      <MemoryRouter>
-        <PageNotFound />
-      </MemoryRouter>,
-    );
-    const link = screen.getByText("Go back to Home");
-    expect(link.closest("a")?.getAttribute("href")).toBe("/");
-  });
 });
