@@ -3,7 +3,7 @@ packages:
   - 'server'
   - 'shared'
 allowBuilds:
-  better-sqlite3: false
+  better-sqlite3: true
   esbuild: false
   fastify-socket.io: false
   msw: false
