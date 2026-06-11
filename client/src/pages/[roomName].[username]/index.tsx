@@ -5,6 +5,7 @@ import { useSocket } from "@/lib/stores/use-socket.ts";
 import { useSocketLobby } from "@/lib/game/hooks/use-socket-lobby.ts";
 import { PlayerList } from "@/components/room/player-list.tsx";
 import { LaunchGameButton } from "@/components/room/launch-game-button.tsx";
+import { ChooseGameMode } from "@/components/room/choose-game-mode.tsx";
 
 export default function Room() {
   const { players, leaderId, roomName, errorMessage } = useSocketLobby();
@@ -27,7 +28,7 @@ export default function Room() {
     <section className="flex items-center justify-center h-screen w-screen ">
       <Card className={"w-full max-w-md p-8"}>
         <CardHeader className="text-2xl ">Red Tetris - {roomName}</CardHeader>
-        <CardContent className="">
+        <CardContent className="flex flex-col gap-4">
           {players.length > 0 && !isPlaying && (
             <>
               {!isSoloGame && winner && (
@@ -40,6 +41,9 @@ export default function Room() {
               )}
               <div className="grid grid-cols-3 gap-4 justify-center">
                 <PlayerList players={players} leaderId={leaderId} />
+              </div>
+              <div className="w-full flex flex-col gap-4">
+                <ChooseGameMode />
                 <LaunchGameButton
                   leaderId={leaderId}
                   socketId={socketId}

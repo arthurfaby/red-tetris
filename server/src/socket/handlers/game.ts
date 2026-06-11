@@ -1,4 +1,4 @@
-import { SocketPlayer, SocketServer } from '@red-tetris/shared'
+import { GameMode, SocketPlayer, SocketServer } from '@red-tetris/shared'
 import { GameManager } from '../managers/GameManager'
 import { PlayerManager } from '../managers/PlayerManager'
 import { handlePrintError } from '../handle-print-error'
@@ -10,7 +10,7 @@ export function handlerGame(
     gameManager: GameManager,
     playerManager: PlayerManager
 ) {
-    socket.on('start_game', async (gameId: string) => {
+    socket.on('start_game', async (gameId: string, gameMode: GameMode) => {
         try {
             if (!socket.rooms.has(gameId)) {
                 return

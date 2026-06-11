@@ -64,7 +64,9 @@ export default function Index() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <Button onClick={handleJoin}>Join</Button>
+          <Button className="w-full" onClick={handleJoin}>
+            Join
+          </Button>
           {errors.length > 0 && <Separator className="mt-2 mb-2"></Separator>}
           {errors.map((error) => (
             <p key={error} className="text-red-400">

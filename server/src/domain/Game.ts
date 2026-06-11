@@ -1,16 +1,18 @@
 import { Player } from './Player'
 import { Piece } from './Piece'
-import { GameStatus } from '@red-tetris/shared'
+import { GameMode, GameStatus } from '@red-tetris/shared'
 
 export class Game {
     #playerList: Player[]
     #piece: Piece
     #status: GameStatus
+    #gameMode: GameMode
 
     constructor(leader: Player) {
         this.#playerList = [leader]
         this.#piece = new Piece(this.#playerList)
         this.#status = 'IN_LOBBY'
+        this.#gameMode = 'DEFAULT'
     }
 
     get isSoloGame(): boolean {
@@ -29,6 +31,10 @@ export class Game {
         return this.#piece
     }
 
+    get gameMode(): GameMode {
+        return this.#gameMode
+    }
+
     get winnerOrNull() {
         const playerNotDead = this.#playerList.filter((p) => !p.isDead)
         if (playerNotDead.length <= 1 && this.#playerList.length > 1) {
@@ -39,6 +45,10 @@ export class Game {
 
     setStatus(status: GameStatus) {
         this.#status = status
+    }
+
+    setGameMode(gameMode: GameMode) {
+        this.#gameMode = gameMode
     }
 
     addPlayer(player: Player) {

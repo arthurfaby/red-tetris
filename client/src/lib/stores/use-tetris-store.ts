@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   DEFAULT_TETROMINO_POSITION,
+  type GameMode,
   GRID_HEIGHT,
   GRID_WIDTH,
   type PlayerListData,
@@ -18,6 +19,7 @@ import { clearLines } from "@/lib/game/logic/clear-lines.ts";
 import { getSpectrum } from "@/lib/game/logic/get-spectrum.ts";
 import { useSocket } from "@/lib/stores/use-socket.ts";
 import { getBoardWithPenaltyLines } from "@/lib/game/logic/get-board-with-penalty-lines.ts";
+import { getGameModeConfig } from "@/lib/game/config/game-mode-config.ts";
 
 export type BoardState = TetrominoType[][];
 
@@ -45,6 +47,7 @@ export interface TetrisStore {
   isPlayerDead: boolean;
   isGameOver: boolean;
   isSoloGame: boolean;
+  gameMode: GameMode;
   winner: { id: string; username: string } | null;
   room: string | null;
   opponents: Opponent[];
@@ -69,6 +72,7 @@ export interface TetrisStore {
   setOpponent: (id: string, spectrum: number[]) => void;
   setNextPiece: (nextPiece: TetrominoType) => void;
   setBoard: (board: TetrominoType[][]) => void;
+  setGameMode: (gameMode: GameMode) => void;
   setGameOver: (
     payload: Parameters<ServerToClientEvents["game_over"]>[0],
   ) => void;
@@ -93,10 +97,15 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   isPlaying: false,
   isPlayerDead: false,
   isGameOver: false,
+  gameMode: "DEFAULT",
   winner: null,
   intervalId: 0,
   room: null,
   opponents: [],
+
+  setGameMode: (gameMode: GameMode) => {
+    set({ gameMode });
+  },
 
   setOpponent: (id: string, spectrum: number[]) => {
     set({
@@ -141,11 +150,16 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     if (get().intervalId) {
       clearInterval(get().intervalId);
     }
+    console.log("resetInterval", get().gameMode, get().linesCleared);
+    const tickInterval = getGameModeConfig(get().gameMode).getTickInterval(
+      get().linesCleared,
+    );
+    console.log("SETTING INTERVAL with", tickInterval);
 
     set({
       intervalId: +setInterval(() => {
         get().tick();
-      }, 1000),
+      }, tickInterval),
     });
   },
 
@@ -290,6 +304,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       score: get().score + numberOfLinesDeleted * POINTS_PER_LINE,
       linesCleared: get().linesCleared + numberOfLinesDeleted,
     });
+    get().resetInterval();
 
     // 4. Check Game Over
     if (
