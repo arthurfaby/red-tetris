@@ -69,6 +69,14 @@ export function useSocketLobby() {
       payload: Parameters<ServerToClientEvents["game_over"]>[0],
     ) => {
       setGameOver(payload);
+      const score = useTetrisStore.getState().score;
+      if (score > 0) {
+        fetch("/api/leaderboard", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: username, score }),
+        }).catch(() => {});
+      }
     };
 
     listen("start_piece", onStartPiece);

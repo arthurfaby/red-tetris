@@ -9,7 +9,7 @@ const sqlitePlugin: FastifyPluginAsync = async (fastify) => {
     CREATE TABLE IF NOT EXISTS leaderboard (
       id    INTEGER PRIMARY KEY AUTOINCREMENT,
       name  TEXT NOT NULL,
-      score INTEGER UNIQUE NOT NULL
+      score INTEGER NOT NULL
     )
   `)
 
