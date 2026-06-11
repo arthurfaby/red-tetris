@@ -15,6 +15,10 @@ export class Game {
         this.#gameMode = 'DEFAULT'
     }
 
+    get leader(): Player | null {
+        return this.#playerList[0] ?? null
+    }
+
     get isSoloGame(): boolean {
         return this.#status != 'IN_LOBBY' && this.#playerList.length === 1
     }

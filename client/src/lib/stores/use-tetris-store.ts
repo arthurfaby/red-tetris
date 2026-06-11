@@ -68,6 +68,7 @@ export interface TetrisStore {
   hardDrop: () => void;
   tick: () => void;
   lockPiece: () => void;
+  swapPieces: () => void;
   setRoom: (room: string) => void;
   setOpponent: (id: string, spectrum: number[]) => void;
   setNextPiece: (nextPiece: TetrominoType) => void;
@@ -150,11 +151,9 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     if (get().intervalId) {
       clearInterval(get().intervalId);
     }
-    console.log("resetInterval", get().gameMode, get().linesCleared);
     const tickInterval = getGameModeConfig(get().gameMode).getTickInterval(
       get().linesCleared,
     );
-    console.log("SETTING INTERVAL with", tickInterval);
 
     set({
       intervalId: +setInterval(() => {
@@ -283,6 +282,18 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
     get().lockPiece();
+  },
+
+  swapPieces: () => {
+    console.log("SWAP PIECES");
+    const currentPiece = get().currentPiece;
+    const nextPiece = get().nextPiece;
+    if (isValidPosition(get().board, { ...currentPiece, type: nextPiece })) {
+      set({
+        nextPiece: currentPiece.type,
+        currentPiece: { ...currentPiece, type: nextPiece },
+      });
+    }
   },
 
   lockPiece: () => {

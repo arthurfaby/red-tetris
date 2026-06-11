@@ -43,7 +43,7 @@ export default function Room() {
                 <PlayerList players={players} leaderId={leaderId} />
               </div>
               <div className="w-full flex flex-col gap-4">
-                <ChooseGameMode />
+                <ChooseGameMode isLeader={leaderId === socketId} />
                 <LaunchGameButton
                   leaderId={leaderId}
                   socketId={socketId}

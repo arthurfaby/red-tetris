@@ -80,8 +80,13 @@ export function handlerSocketConnection(
     socket.on('change_game_mode', (gameMode) => {
         try {
             const game = gameManager.getGameOrFail(socket.data.gameId)
-            game.setGameMode(gameMode)
-            io.in(socket.data.gameId).emit('game_mode_changed', game.gameMode)
+            if (socket.id === game.leader?.id) {
+                game.setGameMode(gameMode)
+                io.in(socket.data.gameId).emit(
+                    'game_mode_changed',
+                    game.gameMode
+                )
+            }
         } catch (e) {
             handlePrintError(e)
         }

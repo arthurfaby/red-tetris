@@ -5,21 +5,27 @@ import { useSocket } from "@/lib/stores/use-socket.ts";
 
 const GAME_MODES_INFO: Record<
   GameMode,
-  { styles: string; displayText: string }
+  { defaultStyles: string; leaderStyles: string; displayText: string }
 > = {
   DEFAULT: {
-    styles:
-      " text-foreground hover:bg-green-500/5 hover:border-green-500 hover:text-green-500 data-[selected=true]:text-green-500 data-[selected=true]:border-green-500 border border-foreground",
+    defaultStyles:
+      "text-foreground data-[selected=true]:text-green-500 data-[selected=true]:border-green-500 border border-foreground",
+    leaderStyles:
+      "  hover:bg-green-500/5 hover:border-green-500 hover:text-green-500 ",
     displayText: "Default",
   },
   ACCELERATED_GRAVITY: {
-    styles:
-      " text-foreground hover:bg-orange-500/5 hover:border-orange-500 hover:text-orange-500 data-[selected=true]:text-orange-500 data-[selected=true]:border-orange-500 border border-foreground",
+    defaultStyles:
+      "text-foreground data-[selected=true]:text-orange-500 data-[selected=true]:border-orange-500 border border-foreground",
+    leaderStyles:
+      "hover:bg-orange-500/5 hover:border-orange-500 hover:text-orange-500 ",
     displayText: "Accelerated Gravity",
   },
   SWAP_PIECES: {
-    styles:
-      " text-foreground hover:bg-blue-500/5 hover:border-blue-500 hover:text-blue-500 data-[selected=true]:text-blue-500 data-[selected=true]:border-blue-500 border border-foreground",
+    defaultStyles:
+      "text-foreground data-[selected=true]:text-blue-500 data-[selected=true]:border-blue-500 border border-foreground",
+    leaderStyles:
+      "hover:bg-blue-500/5 hover:border-blue-500 hover:text-blue-500",
     displayText: "Swap Pieces",
   },
 };
@@ -27,14 +33,16 @@ const GAME_MODES_INFO: Record<
 interface GameModeProps {
   gameMode: GameMode;
   selected: boolean;
+  isLeader: boolean;
 }
 
-function GameModeOption({ gameMode, selected }: GameModeProps) {
+function GameModeOption({ gameMode, selected, isLeader }: GameModeProps) {
   return (
     <div
       className={cn(
-        "w-30 h-10 grow flex justify-center items-center rounded-sm",
-        GAME_MODES_INFO[gameMode].styles,
+        "w-30 h-10 grow flex justify-center items-center rounded-sm select-none",
+        isLeader && GAME_MODES_INFO[gameMode].leaderStyles,
+        GAME_MODES_INFO[gameMode].defaultStyles,
       )}
       data-selected={selected}
       onClick={() => {
@@ -50,7 +58,11 @@ function GameModeOption({ gameMode, selected }: GameModeProps) {
   );
 }
 
-export function ChooseGameMode() {
+interface ChooseGameModeProps {
+  isLeader: boolean;
+}
+
+export function ChooseGameMode({ isLeader }: ChooseGameModeProps) {
   const gameModes: GameMode[] = Object.values(GAME_MODES);
   const selectedGameMode = useTetrisStore((state) => state.gameMode);
 
@@ -61,6 +73,7 @@ export function ChooseGameMode() {
           key={gameMode}
           gameMode={gameMode}
           selected={selectedGameMode === gameMode}
+          isLeader={isLeader}
         />
       ))}
     </div>

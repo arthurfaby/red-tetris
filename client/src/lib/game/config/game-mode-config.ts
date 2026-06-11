@@ -1,7 +1,12 @@
 import { type GameMode } from "@red-tetris/shared";
 
+interface ModeActions {
+  swapPieces: () => void;
+}
+
 interface GameModeConfig {
   getTickInterval: (linesCleared?: number) => number;
+  onKeyDown?: Partial<Record<string, (actions: ModeActions) => void>>;
 }
 
 const DEFAULT_TICK_INTERVAL = 1000;
@@ -16,6 +21,7 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
   },
   SWAP_PIECES: {
     getTickInterval: () => DEFAULT_TICK_INTERVAL,
+    onKeyDown: { s: (actions) => actions.swapPieces() },
   },
 };
 
