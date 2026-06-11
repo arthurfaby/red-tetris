@@ -285,7 +285,6 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   },
 
   swapPieces: () => {
-    console.log("SWAP PIECES");
     const currentPiece = get().currentPiece;
     const nextPiece = get().nextPiece;
     if (isValidPosition(get().board, { ...currentPiece, type: nextPiece })) {
