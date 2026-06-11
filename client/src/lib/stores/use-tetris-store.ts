@@ -40,6 +40,7 @@ export interface Opponent {
 export interface TetrisStore {
   board: BoardState;
   currentPiece: TetrominoState;
+  ghostPiece: TetrominoState;
   nextPiece: TetrominoType;
   score: number;
   linesCleared: number;
@@ -79,6 +80,7 @@ export interface TetrisStore {
   ) => void;
   addPenaltyLines: (numberOfPenaltyLines: number) => void;
   setKo: (playerId: string) => void;
+  setGhostPiece: () => void;
 }
 
 export const useTetrisStore = create<TetrisStore>((set, get) => ({
@@ -90,7 +92,11 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     ...DEFAULT_TETROMINO_POSITION,
     rotation: 0,
   },
-
+  ghostPiece: {
+    type: Tetromino.L,
+    ...DEFAULT_TETROMINO_POSITION,
+    rotation: 0,
+  },
   nextPiece: Tetromino.Z,
   score: 0,
   linesCleared: 0,
@@ -103,6 +109,26 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
   intervalId: 0,
   room: null,
   opponents: [],
+
+  setGhostPiece: () => {
+    const currentPiece = get().currentPiece;
+    let dropY = currentPiece.y;
+
+    while (
+      isValidPosition(get().board, {
+        ...currentPiece,
+        y: dropY + 1,
+      })
+    ) {
+      dropY++;
+    }
+    set({
+      ghostPiece: {
+        ...currentPiece,
+        y: dropY,
+      },
+    });
+  },
 
   setGameMode: (gameMode: GameMode) => {
     set({ gameMode });
@@ -213,6 +239,13 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         rotation: 0,
       },
     });
+    set({
+      ghostPiece: {
+        type: startPiece,
+        ...DEFAULT_TETROMINO_POSITION,
+        rotation: 0,
+      },
+    });
     set({ nextPiece });
     set({
       intervalId: +setInterval(() => {
@@ -227,6 +260,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       isValidPosition(get().board, { ...currentPiece, x: currentPiece.x - 1 })
     ) {
       set({ currentPiece: { ...currentPiece, x: currentPiece.x - 1 } });
+      get().setGhostPiece();
     }
   },
   moveRight: () => {
@@ -235,15 +269,19 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
       isValidPosition(get().board, { ...currentPiece, x: currentPiece.x + 1 })
     ) {
       set({ currentPiece: { ...currentPiece, x: currentPiece.x + 1 } });
+      get().setGhostPiece();
     }
   },
   rotate: () => {
     const currentPiece = get().currentPiece;
+    const ghostPiece = get().ghostPiece;
     const newRotation = (currentPiece.rotation + 1) % 4;
     if (
       isValidPosition(get().board, { ...currentPiece, rotation: newRotation })
     ) {
       set({ currentPiece: { ...currentPiece, rotation: newRotation } });
+      set({ ghostPiece: { ...ghostPiece, rotation: newRotation } });
+      get().setGhostPiece();
     }
   },
 
@@ -333,6 +371,14 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
     // 5. Update currentPiece with nextPiece
     set({
       currentPiece: {
+        type: get().nextPiece,
+        ...DEFAULT_TETROMINO_POSITION,
+        rotation: 0,
+      },
+    });
+
+    set({
+      ghostPiece: {
         type: get().nextPiece,
         ...DEFAULT_TETROMINO_POSITION,
         rotation: 0,
