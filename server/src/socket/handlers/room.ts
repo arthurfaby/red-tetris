@@ -28,16 +28,24 @@ export function handlerSocketConnection(
             socket.data.gameId = payload.gameId
 
             if (gameManager.getGame(payload.gameId)?.status === 'LAUNCHED') {
-                socket.emit('join_game', JOIN_GAME_STATUS.ALREADY_LAUNCHED)
+                socket.emit(
+                    'join_game',
+                    JOIN_GAME_STATUS.ALREADY_LAUNCHED,
+                    'DEFAULT'
+                )
                 return
             }
 
             socket.join(payload.gameId)
 
             const gameCreated = gameManager.joinGame(payload.gameId, player)
+            const game = gameManager.getGameOrFail(payload.gameId)
             socket.emit(
                 'join_game',
-                gameCreated ? JOIN_GAME_STATUS.CREATED : JOIN_GAME_STATUS.JOINED
+                gameCreated
+                    ? JOIN_GAME_STATUS.CREATED
+                    : JOIN_GAME_STATUS.JOINED,
+                game.gameMode
             )
 
             const leader = gameManager.getLeader(payload.gameId)
@@ -65,6 +73,21 @@ export function handlerSocketConnection(
             handleNewLeader(io, gameId, gameManager)
             handleWin(io, socket, game)
         } catch (e: unknown) {
+            handlePrintError(e)
+        }
+    })
+
+    socket.on('change_game_mode', (gameMode) => {
+        try {
+            const game = gameManager.getGameOrFail(socket.data.gameId)
+            if (socket.id === game.leader?.id) {
+                game.setGameMode(gameMode)
+                io.in(socket.data.gameId).emit(
+                    'game_mode_changed',
+                    game.gameMode
+                )
+            }
+        } catch (e) {
             handlePrintError(e)
         }
     })
