@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button.tsx";
 import { useSocket } from "@/lib/stores/use-socket.ts";
+import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 
 interface LaunchGameButtonProps {
   leaderId: string;
@@ -13,7 +14,9 @@ export function LaunchGameButton({
   roomName,
 }: LaunchGameButtonProps) {
   const handleStartGame = () => {
-    useSocket.getState().emit("start_game", roomName);
+    useSocket
+      .getState()
+      .emit("start_game", roomName, useTetrisStore.getState().gameMode);
   };
 
   return leaderId === socketId ? (

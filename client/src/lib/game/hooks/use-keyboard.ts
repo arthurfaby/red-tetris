@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
+import { getGameModeConfig } from "@/lib/game/config/game-mode-config.ts";
 
 export function useKeyboard() {
   const moveLeft = useTetrisStore((state) => state.moveLeft);
@@ -9,6 +10,8 @@ export function useKeyboard() {
   const hardDrop = useTetrisStore((state) => state.hardDrop);
   const isPlaying = useTetrisStore((state) => state.isPlaying);
   const isGameOver = useTetrisStore((state) => state.isGameOver);
+  const gameMode = useTetrisStore((state) => state.gameMode);
+  const swapPieces = useTetrisStore((state) => state.swapPieces);
 
   const actionsRef = useRef({
     moveLeft,
@@ -18,6 +21,8 @@ export function useKeyboard() {
     rotate,
     isPlaying,
     isGameOver,
+    gameMode,
+    swapPieces,
   });
 
   useEffect(() => {
@@ -29,8 +34,20 @@ export function useKeyboard() {
       rotate,
       isPlaying,
       isGameOver,
+      gameMode,
+      swapPieces,
     };
-  }, [moveLeft, moveRight, softDrop, rotate, hardDrop, isPlaying, isGameOver]);
+  }, [
+    moveLeft,
+    moveRight,
+    softDrop,
+    rotate,
+    hardDrop,
+    isPlaying,
+    isGameOver,
+    gameMode,
+    swapPieces,
+  ]);
 
   useEffect(() => {
     const pressedKeys = new Set<string>();
@@ -54,6 +71,11 @@ export function useKeyboard() {
       }
       if (event.key === " " && !pressedKeys.has(" ")) {
         hardDrop();
+      }
+      const gameModeConfig = getGameModeConfig(actionsRef.current.gameMode);
+      const modeHandler = gameModeConfig.onKeyDown?.[event.key];
+      if (modeHandler) {
+        modeHandler({ swapPieces: actionsRef.current.swapPieces });
       }
 
       pressedKeys.add(event.key);

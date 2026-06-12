@@ -2,6 +2,7 @@ import { useSocket } from "@/lib/stores/use-socket.ts";
 import { useEffect, useRef, useState } from "react";
 import { useTetrisStore } from "@/lib/stores/use-tetris-store.ts";
 import {
+  type GameMode,
   JOIN_GAME_STATUS,
   type JoinGameStatus,
   type PlayerListData,
@@ -21,6 +22,7 @@ export function useSocketLobby() {
   const startGameStore = useTetrisStore((state) => state.startGame);
   const setRoom = useTetrisStore((state) => state.setRoom);
   const setGameOver = useTetrisStore((state) => state.setGameOver);
+  const setGameMode = useTetrisStore((state) => state.setGameMode);
 
   const [players, setPlayers] = useState<PlayerListData[]>([]);
   const [leaderId, setLeaderId] = useState("");
@@ -48,7 +50,8 @@ export function useSocketLobby() {
       playersRef.current = playerList;
     };
 
-    const onJoinGame = (status: JoinGameStatus) => {
+    const onJoinGame = (status: JoinGameStatus, gameMode: GameMode) => {
+      setGameMode(gameMode);
       switch (status) {
         case JOIN_GAME_STATUS.JOINED:
           toast.success("Game joined successfully");
@@ -79,11 +82,16 @@ export function useSocketLobby() {
       }
     };
 
+    const onGameModeChanged = (gameMode: GameMode) => {
+      setGameMode(gameMode);
+    };
+
     listen("start_piece", onStartPiece);
     listen("set_leader", onSetLeader);
     listen("player_list", onPlayerList);
     listen("join_game", onJoinGame);
     listen("game_over", onGameOver);
+    listen("game_mode_changed", onGameModeChanged);
 
     emit("join_game", { gameId: roomName, username: username });
 
@@ -92,6 +100,8 @@ export function useSocketLobby() {
       off("set_leader", onSetLeader);
       off("player_list", onPlayerList);
       off("join_game", onJoinGame);
+      off("game_over", onGameOver);
+      off("game_mode_changed", onGameModeChanged);
       emit("leave_game", roomName);
     };
   }, [
@@ -103,6 +113,7 @@ export function useSocketLobby() {
     emit,
     off,
     setGameOver,
+    setGameMode,
   ]);
 
   return { players, leaderId, roomName, emit, errorMessage, setErrorMessage };
