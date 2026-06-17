@@ -239,13 +239,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         rotation: 0,
       },
     });
-    set({
-      ghostPiece: {
-        type: startPiece,
-        ...DEFAULT_TETROMINO_POSITION,
-        rotation: 0,
-      },
-    });
+    get().setGhostPiece();
     set({ nextPiece });
     set({
       intervalId: +setInterval(() => {
@@ -376,14 +370,7 @@ export const useTetrisStore = create<TetrisStore>((set, get) => ({
         rotation: 0,
       },
     });
-
-    set({
-      ghostPiece: {
-        type: get().nextPiece,
-        ...DEFAULT_TETROMINO_POSITION,
-        rotation: 0,
-      },
-    });
+    get().setGhostPiece();
 
     // 6. Update nextPiece from backend
     const roomId = get().room;
