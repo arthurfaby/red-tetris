@@ -1,7 +1,7 @@
 import type {TetrominoType} from "./tetrominos";
 import {Server, Socket} from "socket.io";
 import type {JoinGameStatus} from "./status";
-import {GameMode} from "./game-mode";
+import type {GameMode} from "./game-mode";
 
 export type PlayerListData = {
     username: string,

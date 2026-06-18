@@ -1,35 +1,13 @@
 services:
-  setup:
-    image: node:20-alpine
-    working_dir: /app
-    volumes:
-      - .:/app
-    environment:
-      - CI=true
-    command: sh -c "corepack enable pnpm && pnpm install"
-
-  client:
-    image: node:20-alpine
-    working_dir: /app/client
-    volumes:
-      - .:/app
-    ports:
-      - "5173:5173"
-    command: sh -c "corepack enable pnpm && pnpm run dev --host"
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    depends_on:
-      setup:
-        condition: service_completed_successfully
-
-  server:
-    image: node:20-alpine
-    working_dir: /app/server
-    volumes:
-      - .:/app
+  app:
+    build: .
     ports:
       - "3000:3000"
-    command: sh -c "corepack enable pnpm && pnpm run dev"
-    depends_on:
-      setup:
-        condition: service_completed_successfully
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/client/node_modules
+      - /app/server/node_modules
+      - /app/shared/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true

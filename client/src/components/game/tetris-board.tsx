@@ -35,7 +35,11 @@ export function TetrisBoard() {
         row.map((cellType, x) => {
           const isGhost = ghostCoordinates.has(`${y},${x}`);
           return (
-            <TetrisCell key={`${y}-${x}`} type={cellType} ghost={isGhost} />
+            <TetrisCell
+              key={`${y}-${x}`}
+              type={cellType}
+              ghost={isGhost && cellType === Tetromino.NONE}
+            />
           );
         }),
       )}

@@ -63,8 +63,12 @@ describe("useSocket store", () => {
   });
 
   it("emit forwards the event and arguments to the socket", () => {
-    useSocket.getState().emit("start_game", "room-1");
-    expect(mockSocket.emit).toHaveBeenCalledWith("start_game", "room-1");
+    useSocket.getState().emit("start_game", "room-1", "DEFAULT");
+    expect(mockSocket.emit).toHaveBeenCalledWith(
+      "start_game",
+      "room-1",
+      "DEFAULT",
+    );
   });
 
   it("shows a toast error when emit throws", () => {

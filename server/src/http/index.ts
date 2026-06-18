@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { LeaderBoardBody } from '@red-tetris/shared/http'
+import { handlePrintError } from '../socket/handle-print-error'
 
 export const apiRoutes = async (fastify: FastifyInstance) => {
     fastify.get('/leaderboard', async () => {
@@ -21,12 +22,20 @@ export const apiRoutes = async (fastify: FastifyInstance) => {
             },
         },
         async (req, reply) => {
-            const { name, score } = req.body
-            const result = fastify.db
-                .prepare('INSERT INTO leaderBoard (name, score) VALUES (?, ?)')
-                .run(name, score)
+            try {
+                const { name, score } = req.body
+                const result = fastify.db
+                    .prepare(
+                        'INSERT INTO leaderBoard (name, score) VALUES (?, ?)'
+                    )
+                    .run(name, score)
 
-            return reply.code(201).send({ id: Number(result.lastInsertRowid) })
+                return reply
+                    .code(201)
+                    .send({ id: Number(result.lastInsertRowid) })
+            } catch (e: unknown) {
+                handlePrintError(e)
+            }
         }
     )
 }
